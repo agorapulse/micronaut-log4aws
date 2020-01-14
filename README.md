@@ -7,3 +7,5 @@
 Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda
 
 See [Full Documentation][DOCS]
+
+[DOCS]: https://agorapulse.github.io/micronaut-log4aws
