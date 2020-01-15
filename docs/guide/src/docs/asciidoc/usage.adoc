@@ -2,4 +2,38 @@
 [[_usage]]
 = Usage
 
-Lorem ipsum dolor sit amet
+Sentry logger is initialised automatically during the application startup. There is also `SentryClient` instance available for injection if you need to access lower level API.
+
+All the errors have to be logged to be propagated to Sentry. You can use `LogErrors` around advice
+around your method to simplify the logging boilerplate:
+
+.Using LogError Annotation
+[source,java]
+----
+/**
+* This class is an entrypoint called by AWS Lambda. Keep the code to minimum.
+* Method handleRequest is called directly by the AWS Lambda container.
+*/
+class ReportsExporter extends FunctionInitializer implements RequestHandler<SQSEvent, Void> {
+
+    @Inject private ReportsService reportsService;
+
+    Void handleRequest(SQSEvent event, Context context) {
+        return reportsService.handlerRequest(event);
+    }
+
+}
+
+/**
+* This class is handled by Micronaut and can use the advice.
+*/
+class ReportsService implements RequestHandler<SQSEvent, Void> {
+
+    @LogError
+    Void handleRequest(SQSEvent event, Context context) {
+        return reportsService.handlerRequest(event);
+    }
+
+}
+----
+

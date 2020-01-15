@@ -2,4 +2,5 @@
 [[_introduction]]
 = Introduction
 
-Lorem ipsum dolor sit amet
+Micronaut Log4AWS simplifies integration of https://aws.amazon.com/lambda/[AWS Lambda] functions written with https://micronaut-projects.github.io/micronaut-aws/latest/guide/[Micronaut]
+into https://sentry.io/[Sentry] service.

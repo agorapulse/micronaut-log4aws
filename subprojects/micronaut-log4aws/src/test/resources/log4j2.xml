@@ -34,18 +34,11 @@
             <!-- Note that the Sentry logging threshold is overridden to the WARN level -->
             <AppenderRef ref="Sentry" level="warn"/>
         </Root>
-        <Logger name="com.mysql" level="error" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
         <Logger name="io.sentry" level="warn" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
         <Logger name="software.amazon" level="warn" additivity="false">
             <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="agorapulse" level="debug" additivity="false">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="Sentry" level="warn"/>
         </Logger>
     </Loggers>
 </Configuration>
