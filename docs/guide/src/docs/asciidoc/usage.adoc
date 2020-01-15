@@ -5,7 +5,7 @@
 Sentry logger is initialised automatically during the application startup. There is also `SentryClient` instance available for injection if you need to access lower level API.
 
 All the errors have to be logged to be propagated to Sentry. You can use `LogErrors` around advice
-around your method to simplify the logging boilerplate:
+with your entry-point method to simplify the logging boilerplate:
 
 .Using LogError Annotation
 [source,java]
@@ -27,6 +27,7 @@ class ReportsExporter extends FunctionInitializer implements RequestHandler<SQSE
 /**
 * This class is handled by Micronaut and can use the advice.
 */
+@Singleton
 class ReportsService implements RequestHandler<SQSEvent, Void> {
 
     @LogError
@@ -36,4 +37,6 @@ class ReportsService implements RequestHandler<SQSEvent, Void> {
 
 }
 ----
+
+WARNING: The annotation applied to the function class itself has no effect as the function class is executed by AWS Lambda container.
 

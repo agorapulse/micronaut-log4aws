@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     // load just simple implementation with POJO client and reflection based parser
-    testCompile "com.agorapulse:micronaut-log4aws:{version}"
+    implementation "com.agorapulse:micronaut-log4aws:{project-version}"
 }
 ----
 
@@ -21,12 +21,12 @@ Also be sure that your build file **does not contain any referrence to Logback**
 
 .Build File Cleanup
 [source,subs='verbatim,attributes']
-```
+----
 dependencies {
     // remove following line from your build file if present
     runtime "ch.qos.logback:logback-classic:1.2.3"
 }
-```
+----
 
 Then remove Logback configuration file from `src/main/resources/logback.groovy`
 and replace it with a new file `log4j2.xml` with following content. Feel free to update the file to fit your needs.
@@ -34,19 +34,19 @@ and replace it with a new file `log4j2.xml` with following content. Feel free to
 
 .Log4J2 Configuration
 [source,xml,subs='verbatim,attributes']
-```
+----
 include::../../../../../subprojects/micronaut-log4aws/src/test/resources/log4j2.xml[lines=1;21..51]
-```
+----
 
 As a last step you need to create a file `sentry.properties` for sentry configuration - also in `src/main/resources`:
 
 .sentry.properties
 [source,properties,subs='verbatim,attributes']
-```
+----
 # guarantees all events are logged before the function execution is finished
 async=false
 
 # you should consider adding your packages here to enable filtering of stack traces in Sentry
 
 # stacktrace.app.packages=agorapulse,com.agorapulse
-```
+----
