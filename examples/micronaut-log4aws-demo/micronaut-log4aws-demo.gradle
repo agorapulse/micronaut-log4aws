@@ -15,6 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+plugins {
+    id 'groovy'
+    id "jp.classmethod.aws.lambda"
+    id "com.github.johnrengelman.shadow"
+}
+
 config {
     bintray {
         enabled = true
@@ -22,6 +28,8 @@ config {
 }
 
 dependencies {
+    compile project(':micronaut-log4aws')
+
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     compile platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
@@ -34,7 +42,10 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion"
 
     compile "io.micronaut:micronaut-core"
+    compile "io.micronaut:micronaut-function"
+
     compileOnly "io.micronaut:micronaut-inject-groovy"
+
 
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
@@ -45,5 +56,28 @@ dependencies {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 
+}
+
+
+shadowJar {
+    mergeServiceFiles()
+    mergeGroovyExtensionModules()
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+}
+
+aws {
+    profileName = 'beta'
+    region = 'eu-west-1'
+}
+
+task deploy(type: jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+    functionName = "MicronautLog4AwsDemo"
+    handler = "com.agorapulse.micronaut.log4aws.demo.LoggingDemo::apply"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda-basic-role"
+    runtime = com.amazonaws.services.lambda.model.Runtime.Java8
+    zipFile = shadowJar.archivePath
+    memorySize = 1024
+    timeout = 300
+    publish = true
 }
 
