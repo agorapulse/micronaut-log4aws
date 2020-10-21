@@ -43,13 +43,15 @@ buildscript {
             force = true
         }
         classpath 'org.ajoberstar.grgit:grgit-core:4.0.1'
+        classpath 'jp.classmethod.aws:gradle-aws-plugin:0.41'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
 }
 
 apply plugin: 'org.kordamp.gradle.settings'
 
 projects {
-    directories = ['subprojects', 'docs']
+    directories = ['subprojects', 'docs',  'examples']
 }
 
 rootProject.name = 'micronaut-log4aws-root'
