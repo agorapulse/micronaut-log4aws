@@ -20,12 +20,8 @@ package com.agorapulse.micronaut.log4aws;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
-import io.sentry.Sentry;
-import io.sentry.SentryClient;
-import io.sentry.config.Lookup;
-import io.sentry.connection.EventSendCallback;
-import io.sentry.dsn.Dsn;
-import io.sentry.event.Event;
+import io.sentry.*;
+import io.sentry.config.PropertiesProviderFactory;
 import io.sentry.log4j2.SentryAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -33,13 +29,10 @@ import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
-
-import static io.sentry.DefaultSentryClientFactory.ASYNC_OPTION;
+import java.util.Optional;
 
 /**
  * Initializes Sentry for Micronaut.
@@ -47,92 +40,45 @@ import static io.sentry.DefaultSentryClientFactory.ASYNC_OPTION;
 @Factory
 public class Log4AwsFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Log4AwsFactory.class);
-
     /**
      * Automatically registers sentry logging during application context startup.
+     *
      * @return sentry appender
      */
     @Bean
     @Context
-    public SentryAppender sentryAppender() {
-        boolean sync = !Boolean.FALSE.toString().equals(Lookup.getDefault().get(ASYNC_OPTION));
-        boolean dsnProvided = !Dsn.DEFAULT_DSN.equals(Dsn.dsnLookup());
-
-        if (sync && dsnProvided) {
-            // in future releases
-            // throw new IllegalStateException("Sentry not configured correctly for synchornous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
-            LOGGER.error("Sentry not configured correctly for synchornous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
-        }
-
-        return initializeAppenderIfMissing(
-            SentryAppender.class,
-            Level.WARN,
-            SentryAppender.APPENDER_NAME,
-            SentryAppender::new
-        );
-    }
-
-    /**
-     * Sentry client to be injected.
-     *
-     * Please, use the injection instead of static reference to simplify testing.
-     *
-     * @return sentry client
-     */
-    @Bean
-    @Context
-    public SentryClient sentryClient() {
-        Sentry.init();
-
-        SentryClient client = Sentry.getStoredClient();
-        client.addBuilderHelper(new AwsLambdaEventBuildHelper());
-        client.addEventSendCallback(new EventSendCallback() {
-            @Override
-            public void onFailure(Event event, Exception exception) {
-                LOGGER.error("Failed to send event to Sentry: " + event, exception);
-            }
-
-            @Override
-            public void onSuccess(Event event) {
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Event sent to Sentry: " + event);
-                }
-            }
-        });
-
-        return client;
-    }
-
-    private <A extends Appender> A initializeAppenderIfMissing(
-        Class<A> appenderClass,
-        Level defaultLevel,
-        String defaultName,
-        Supplier<A> initializer
-    ) {
+    public SentryAppender sentryAppender(IHub hub) {
         LoggerContext lc = (LoggerContext) LogManager.getContext(false);
         Configuration configuration = lc.getConfiguration();
 
-        String name = defaultName;
-        A appender = null;
+        String name = "Sentry";
+        SentryAppender appender = null;
 
         for (Map.Entry<String, Appender> e : configuration.getAppenders().entrySet()) {
-            if (appenderClass.isInstance(e.getValue())) {
-                appender = appenderClass.cast(e.getValue());
+            if (e.getValue() instanceof SentryAppender) {
+                appender = (SentryAppender) e.getValue();
                 name = e.getKey();
             }
         }
 
         if (appender == null) {
-            appender = initializer.get();
+            SentryOptions options = SentryOptions.from(PropertiesProviderFactory.create());
+            appender = new SentryAppender(
+                name,
+                null,
+                Optional.ofNullable(options.getDsn()).orElse(""),
+                Level.INFO,
+                Level.ERROR,
+                options.getTransport(),
+                hub);
             appender.start();
             configuration.addAppender(appender);
         }
 
         LoggerConfig rootLoggerConfig = configuration.getRootLogger();
-        if (rootLoggerConfig.getAppenders().values().stream().noneMatch(appenderClass::isInstance)) {
+        if (rootLoggerConfig.getAppenders().values().stream().noneMatch(SentryAppender.class::isInstance)) {
             rootLoggerConfig.removeAppender(name);
-            rootLoggerConfig.addAppender(configuration.getAppender(name), defaultLevel, null);
+            rootLoggerConfig.addAppender(configuration.getAppender(name), Level.WARN, null);
         }
 
         lc.updateLoggers();
@@ -140,4 +86,30 @@ public class Log4AwsFactory {
         return appender;
     }
 
+    /**
+     * Sentry client to be injected.
+     * <p>
+     * Please, use the injection instead of static reference to simplify testing.
+     *
+     * @return sentry client
+     */
+    @Bean(preDestroy = "close")
+    @Context
+    public IHub sentryHub(
+        List<EventProcessor> eventProcessors,
+        List<Integration> integrations,
+        List<IScopeObserver> scopeObservers
+    ) {
+        SentryOptions propertiesOptions = SentryOptions.from(PropertiesProviderFactory.create());
+
+        Optional.ofNullable(propertiesOptions.getDsn()).ifPresent(dsn -> Sentry.init(options -> {
+            options.setEnableExternalConfiguration(true);
+            options.setDsn(dsn);
+            eventProcessors.forEach(options::addEventProcessor);
+            integrations.forEach(options::addIntegration);
+            scopeObservers.forEach(options::addScopeObserver);
+        }));
+
+        return HubAdapter.getInstance();
+    }
 }
