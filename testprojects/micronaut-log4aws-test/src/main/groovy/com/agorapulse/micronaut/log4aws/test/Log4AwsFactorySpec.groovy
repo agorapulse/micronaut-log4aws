@@ -18,7 +18,7 @@
 package com.agorapulse.micronaut.log4aws.test
 
 import io.micronaut.context.ApplicationContext
-import io.sentry.SentryClient
+import io.sentry.IHub
 import io.sentry.log4j2.SentryAppender
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.LoggerContext
@@ -34,7 +34,7 @@ abstract class Log4AwsFactorySpec extends Specification {
 
     void 'sentry appender configured'() {
         expect:
-            context.getBean(SentryClient)
+            context.getBean(IHub)
             context.getBean(SentryAppender)
 
         when:
