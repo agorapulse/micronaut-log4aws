@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.1.1</span>
+<span id="revnumber">version 1.1.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -129,7 +129,7 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 
 dependencies {
     // load just simple implementation with POJO client and reflection based parser
-    implementation "com.agorapulse:micronaut-log4aws:1.1.1"
+    implementation "com.agorapulse:micronaut-log4aws:1.1.2"
 }</code></pre>
 </div>
 </div>
@@ -178,6 +178,18 @@ and replace it with a new file <code>log4j2.xml</code> with following content. F
     &lt;/Loggers&gt;
 &lt;/Configuration&gt;</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The library can configure <code>Sentry</code> appender for you if you forget to specify it in the configuration file.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>As a last step you need to create a file <code>sentry.properties</code> for sentry configuration - also in <code>src/main/resources</code>:</p>
@@ -264,8 +276,8 @@ The annotation applied to the function class itself has no effect as the functio
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.1.1<br>
-Last updated 2020-10-21 15:38:54 UTC
+Version 1.1.2<br>
+Last updated 2020-10-22 06:22:24 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
