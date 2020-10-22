@@ -51,7 +51,7 @@ buildscript {
 apply plugin: 'org.kordamp.gradle.settings'
 
 projects {
-    directories = ['subprojects', 'docs',  'examples']
+    directories = ['subprojects', 'docs',  'examples', 'testprojects']
 }
 
 rootProject.name = 'micronaut-log4aws-root'

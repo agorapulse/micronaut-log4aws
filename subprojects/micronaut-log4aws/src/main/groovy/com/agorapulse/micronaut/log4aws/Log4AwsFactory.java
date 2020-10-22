@@ -29,13 +29,15 @@ import io.sentry.event.Event;
 import io.sentry.log4j2.SentryAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static io.sentry.DefaultSentryClientFactory.ASYNC_OPTION;
 
@@ -43,10 +45,9 @@ import static io.sentry.DefaultSentryClientFactory.ASYNC_OPTION;
  * Initializes Sentry for Micronaut.
  */
 @Factory
-public class SentryClientFactory {
+public class Log4AwsFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SentryClientFactory.class);
-    private static final String APPENDER_NAME = "Sentry";
+    private static final Logger LOGGER = LoggerFactory.getLogger(Log4AwsFactory.class);
 
     /**
      * Automatically registers sentry logging during application context startup.
@@ -64,6 +65,24 @@ public class SentryClientFactory {
             LOGGER.error("Sentry not configured correctly for synchornous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
         }
 
+        return initializeAppenderIfMissing(
+            SentryAppender.class,
+            Level.WARN,
+            SentryAppender.APPENDER_NAME,
+            SentryAppender::new
+        );
+    }
+
+    /**
+     * Sentry client to be injected.
+     *
+     * Please, use the injection instead of static reference to simplify testing.
+     *
+     * @return sentry client
+     */
+    @Bean
+    @Context
+    public SentryClient sentryClient() {
         Sentry.init();
 
         SentryClient client = Sentry.getStoredClient();
@@ -82,36 +101,43 @@ public class SentryClientFactory {
             }
         });
 
+        return client;
+    }
 
+    private <A extends Appender> A initializeAppenderIfMissing(
+        Class<A> appenderClass,
+        Level defaultLevel,
+        String defaultName,
+        Supplier<A> initializer
+    ) {
         LoggerContext lc = (LoggerContext) LogManager.getContext(false);
         Configuration configuration = lc.getConfiguration();
 
-        SentryAppender appender = configuration.getAppender(APPENDER_NAME);
-        if (appender == null) {
-            appender = new SentryAppender();
-            appender.start();
+        String name = defaultName;
+        A appender = null;
+
+        for (Map.Entry<String, Appender> e : configuration.getAppenders().entrySet()) {
+            if (appenderClass.isInstance(e.getValue())) {
+                appender = appenderClass.cast(e.getValue());
+                name = e.getKey();
+            }
         }
-        configuration.addAppender(appender);
+
+        if (appender == null) {
+            appender = initializer.get();
+            appender.start();
+            configuration.addAppender(appender);
+        }
 
         LoggerConfig rootLoggerConfig = configuration.getRootLogger();
-        rootLoggerConfig.removeAppender(APPENDER_NAME);
-        rootLoggerConfig.addAppender(configuration.getAppender(APPENDER_NAME), Level.WARN, null);
+        if (rootLoggerConfig.getAppenders().values().stream().noneMatch(appenderClass::isInstance)) {
+            rootLoggerConfig.removeAppender(name);
+            rootLoggerConfig.addAppender(configuration.getAppender(name), defaultLevel, null);
+        }
+
         lc.updateLoggers();
 
         return appender;
-    }
-
-    /**
-     * Sentry client to be injected.
-     *
-     * Please, use the injection instead of static reference to simplify testing.
-     *
-     * @return sentry client
-     */
-    @Bean
-    @Singleton
-    public SentryClient sentryClient() {
-        return Sentry.getStoredClient();
     }
 
 }
