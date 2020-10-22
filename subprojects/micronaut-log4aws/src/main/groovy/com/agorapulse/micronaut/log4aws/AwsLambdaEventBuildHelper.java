@@ -17,22 +17,25 @@
  */
 package com.agorapulse.micronaut.log4aws;
 
-import io.sentry.event.EventBuilder;
-import io.sentry.event.helper.EventBuilderHelper;
+import io.micronaut.context.annotation.Context;
+import io.sentry.EventProcessor;
+import io.sentry.SentryEvent;
 
-public class AwsLambdaEventBuildHelper implements EventBuilderHelper {
+@Context
+public class AwsLambdaEventBuildHelper implements EventProcessor {
 
     @Override
-    public void helpBuildingEvent(EventBuilder eventBuilder) {
-        eventBuilder.withTag("aws_region", System.getenv("AWS_REGION"));
-        eventBuilder.withTag("aws_default_region", System.getenv("AWS_DEFAULT_REGION"));
-        eventBuilder.withTag("lambda_function_name", System.getenv("AWS_LAMBDA_FUNCTION_NAME"));
-        eventBuilder.withTag("lambda_function_version", System.getenv("AWS_LAMBDA_FUNCTION_VERSION"));
-        eventBuilder.withTag("lambda_handler", System.getenv("_HANDLER"));
-        eventBuilder.withTag("lambda_execution_environment", System.getenv("AWS_EXECUTION_ENV"));
-        eventBuilder.withTag("lambda_log_group_name", System.getenv("AWS_LAMBDA_LOG_GROUP_NAME"));
-        eventBuilder.withTag("lambda_log_stream_name", System.getenv("AWS_LAMBDA_LOG_STREAM_NAME"));
-        eventBuilder.withTag("lambda_memory_size", System.getenv("AWS_LAMBDA_FUNCTION_MEMORY_SIZE"));
+    public SentryEvent process(SentryEvent event, Object hint) {
+        event.setTag("aws_region", System.getenv("AWS_REGION"));
+        event.setTag("aws_default_region", System.getenv("AWS_DEFAULT_REGION"));
+        event.setTag("lambda_function_name", System.getenv("AWS_LAMBDA_FUNCTION_NAME"));
+        event.setTag("lambda_function_version", System.getenv("AWS_LAMBDA_FUNCTION_VERSION"));
+        event.setTag("lambda_handler", System.getenv("_HANDLER"));
+        event.setTag("lambda_execution_environment", System.getenv("AWS_EXECUTION_ENV"));
+        event.setTag("lambda_log_group_name", System.getenv("AWS_LAMBDA_LOG_GROUP_NAME"));
+        event.setTag("lambda_log_stream_name", System.getenv("AWS_LAMBDA_LOG_STREAM_NAME"));
+        event.setTag("lambda_memory_size", System.getenv("AWS_LAMBDA_FUNCTION_MEMORY_SIZE"));
+        return event;
     }
 
 }
