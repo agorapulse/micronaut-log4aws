@@ -17,12 +17,11 @@
  */
 plugins {
     id 'groovy'
-    id "jp.classmethod.aws.lambda"
-    id "com.github.johnrengelman.shadow"
 }
 
 dependencies {
     compile project(':micronaut-log4aws')
+    testCompile project(':micronaut-log4aws-test')
 
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     compile platform("io.micronaut:micronaut-bom:$micronautVersion")
@@ -30,41 +29,8 @@ dependencies {
     testCompile platform("io.micronaut:micronaut-bom:$micronautVersion")
 
     annotationProcessor "io.micronaut:micronaut-inject-java"
-
     compile "io.micronaut:micronaut-core"
-    compile "io.micronaut:micronaut-function"
-
     compileOnly "io.micronaut:micronaut-inject-groovy"
-
-    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
-
     testCompile "io.micronaut:micronaut-inject-groovy"
-    testCompile "com.github.stefanbirkner:system-rules:$systemRulesVersion"
-    testCompile("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-}
-
-
-shadowJar {
-    mergeServiceFiles()
-    mergeGroovyExtensionModules()
-    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
-}
-
-aws {
-    profileName = 'beta'
-    region = 'eu-west-1'
-}
-
-task deploy(type: jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
-    functionName = "MicronautLog4AwsDemo"
-    handler = "com.agorapulse.micronaut.log4aws.demo.LoggingDemo::apply"
-    role = "arn:aws:iam::${aws.accountId}:role/lambda-basic-role"
-    runtime = com.amazonaws.services.lambda.model.Runtime.Java8
-    zipFile = shadowJar.archivePath
-    memorySize = 1024
-    timeout = 300
-    publish = true
 }
 

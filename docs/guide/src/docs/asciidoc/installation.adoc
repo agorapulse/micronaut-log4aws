@@ -38,6 +38,8 @@ and replace it with a new file `log4j2.xml` with following content. Feel free to
 include::../../../../../subprojects/micronaut-log4aws/src/test/resources/log4j2.xml[lines=1;21..51]
 ----
 
+TIP: The library can configure `Sentry` appender for you if you forget to specify it in the configuration file.
+
 As a last step you need to create a file `sentry.properties` for sentry configuration - also in `src/main/resources`:
 
 .sentry.properties
