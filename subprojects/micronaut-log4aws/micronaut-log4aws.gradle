@@ -36,14 +36,23 @@ dependencies {
     compile "io.micronaut:micronaut-core"
     compileOnly "io.micronaut:micronaut-inject-groovy"
 
+    compileOnly 'io.micronaut:micronaut-http'
+    compileOnly 'io.reactivex.rxjava2:rxjava'
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
     testCompile "io.micronaut:micronaut-inject-groovy"
+    testCompile "io.micronaut:micronaut-http-server-netty"
+
     testCompile "com.github.stefanbirkner:system-rules:$systemRulesVersion"
+
     testCompile("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
+
+    testCompile "com.agorapulse:gru-http:$gruVersion"
+    testCompile "net.bytebuddy:byte-buddy:$bytebuddyVersion"
+    testCompile "org.objenesis:objenesis:$objenesisVersion"
 
 }
 
