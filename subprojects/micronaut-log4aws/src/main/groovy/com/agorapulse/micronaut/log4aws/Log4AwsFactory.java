@@ -20,6 +20,7 @@ package com.agorapulse.micronaut.log4aws;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.env.Environment;
 import io.sentry.Sentry;
 import io.sentry.SentryClient;
 import io.sentry.config.Lookup;
@@ -55,14 +56,15 @@ public class Log4AwsFactory {
      */
     @Bean
     @Context
-    public SentryAppender sentryAppender() {
-        boolean sync = !Boolean.FALSE.toString().equals(Lookup.getDefault().get(ASYNC_OPTION));
+    public SentryAppender sentryAppender(Environment environment) {
+        boolean async = !Boolean.FALSE.toString().equals(Lookup.getDefault().get(ASYNC_OPTION));
         boolean dsnProvided = !Dsn.DEFAULT_DSN.equals(Dsn.dsnLookup());
+        boolean function = environment.getActiveNames().contains(Environment.FUNCTION);
 
-        if (sync && dsnProvided) {
+        if (async && dsnProvided && function) {
             // in future releases
             // throw new IllegalStateException("Sentry not configured correctly for synchornous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
-            LOGGER.error("Sentry not configured correctly for synchornous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
+            LOGGER.error("Sentry not configured correctly for synchronous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
         }
 
         return initializeAppenderIfMissing(
