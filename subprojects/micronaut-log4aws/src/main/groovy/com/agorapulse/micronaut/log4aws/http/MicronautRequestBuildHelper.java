@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Agorapulse.
+ * Copyright 2020-2021 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,12 @@ public class MicronautRequestBuildHelper implements EventBuilderHelper {
     public void helpBuildingEvent(EventBuilder eventBuilder) {
         eventBuilder.withTag("req.path", request.getPath());
         eventBuilder.withTag("req.method", request.getMethod().toString());
-        eventBuilder.withTag("req.remoteHost", request.getRemoteAddress().getHostString());
+
+        if (request.getRemoteAddress() != null) {
+            // it can be actually null on read timeout
+            eventBuilder.withTag("req.remoteHost", request.getRemoteAddress().getHostString());
+        }
+
         eventBuilder.withTag("req.serverHost", request.getServerAddress().getHostString());
         eventBuilder.withExtra("req.parameters", resolveParameters(request));
         eventBuilder.withExtra("req.headers", resolveHeaders(request));
