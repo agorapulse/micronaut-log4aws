@@ -23,13 +23,12 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.sentry.SentryClient
 import io.sentry.event.helper.EventBuilderHelper
-import org.junit.Rule
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 class SentryFilterSpec extends Specification {
 
-    @Rule Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
 
     @AutoCleanup ApplicationContext context
     @AutoCleanup EmbeddedServer server
