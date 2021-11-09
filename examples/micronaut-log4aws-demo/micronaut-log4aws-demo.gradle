@@ -39,7 +39,7 @@ dependencies {
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
     testCompile "io.micronaut:micronaut-inject-groovy"
-    testCompile "com.github.stefanbirkner:system-lamnbda:$systemLambdaVersion"
+    testCompile "com.github.stefanbirkner:system-lambda:$systemLambdaVersion"
     testCompile("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }

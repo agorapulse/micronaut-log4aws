@@ -100,7 +100,6 @@ config {
 
 allprojects {
     repositories {
-        jcenter()
         mavenCentral()
         maven { url  "https://dl.bintray.com/agorapulse/libs" }
         maven { url "https://repo.spring.io/release"  }
@@ -118,8 +117,10 @@ subprojects { subproject ->
     apply plugin: 'groovy'
 
     dependencies {
+        compile platform("org.spockframework:spock-bom:$spockVersion")
+        testCompile platform("org.spockframework:spock-bom:$spockVersion")
         // add your global dependencies
-        testCompile("org.spockframework:spock-core:$spockVersion") {
+        testCompile("org.spockframework:spock-core") {
             exclude group: "org.codehaus.groovy", module: "groovy-all"
         }
         testCompile "net.bytebuddy:byte-buddy:$bytebuddyVersion"
