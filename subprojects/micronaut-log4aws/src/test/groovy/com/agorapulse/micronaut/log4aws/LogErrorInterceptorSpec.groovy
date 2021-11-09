@@ -18,11 +18,11 @@
 package com.agorapulse.micronaut.log4aws
 
 import io.micronaut.context.ApplicationContext
-import org.junit.Rule
-import org.junit.contrib.java.lang.system.SystemOutRule
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import javax.inject.Singleton
+
+import static com.github.stefanbirkner.systemlambda.SystemLambda.*
 
 class LogErrorInterceptorSpec extends Specification {
 
