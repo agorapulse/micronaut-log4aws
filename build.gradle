@@ -119,6 +119,11 @@ subprojects { subproject ->
 
     dependencies {
         // add your global dependencies
+        testCompile("org.spockframework:spock-core:$spockVersion") {
+            exclude group: "org.codehaus.groovy", module: "groovy-all"
+        }
+        testCompile "net.bytebuddy:byte-buddy:$bytebuddyVersion"
+        testCompile "org.objenesis:objenesis:$objenesisVersion"
     }
 
     // useful for Micronaut
@@ -134,6 +139,7 @@ subprojects { subproject ->
 
     // location independent tests (useful for stable CI builds)
     tasks.withType(Test){
+        useJUnitPlatform()
         systemProperty 'user.timezone', 'UTC'
         systemProperty 'user.language', 'en'
     }
