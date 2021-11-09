@@ -28,63 +28,75 @@ class LogErrorInterceptorSpec extends Specification {
 
     private static final String LOGGED_EVENT = 'ERROR ThrowsIllegalArgumentTester:44 - Exception executing method'
 
-    @Rule SystemOutRule systemOutRule = new SystemOutRule().enableLog()
-
     @AutoCleanup ApplicationContext context = ApplicationContext.run()
 
     void 'exception is logged'() {
         given:
             ThrowsIllegalArgumentTester tester = context.getBean(ThrowsIllegalArgumentTester)
+            IllegalArgumentException ex
         when:
-            tester.normal()
+            String out = tapSystemErrAndOut {
+                try {
+                    tester.normal()
+                } catch (IllegalArgumentException e) {
+                    ex = e
+                }
+            }
         then:
-            thrown IllegalArgumentException
-
-            systemOutRule.log.contains(LOGGED_EVENT)
+            ex
+            out?.contains(LOGGED_EVENT)
     }
 
     void 'exception is muted'() {
         given:
             ThrowsIllegalArgumentTester tester = context.getBean(ThrowsIllegalArgumentTester)
         when:
-            tester.muted()
+            String out = tapSystemErrAndOut {
+                tester.muted()
+            }
         then:
             noExceptionThrown()
 
-            systemOutRule.log.contains(LOGGED_EVENT)
+            out?.contains(LOGGED_EVENT)
     }
 
     void 'exception is filtered'() {
         given:
             ThrowsIllegalArgumentTester tester = context.getBean(ThrowsIllegalArgumentTester)
         when:
-            tester.filtered()
+            String out = tapSystemErrAndOut {
+                tester.filtered()
+            }
         then:
             thrown IllegalArgumentException
 
-            !systemOutRule.log.contains(LOGGED_EVENT)
+            !out?.contains(LOGGED_EVENT)
     }
 
     void 'exception is filtered and muted match'() {
         given:
             ThrowsIllegalArgumentTester tester = context.getBean(ThrowsIllegalArgumentTester)
         when:
-            tester.filteredAndMutedMatch()
+            String out = tapSystemErrAndOut {
+                tester.filteredAndMutedMatch()
+            }
         then:
             noExceptionThrown()
 
-            systemOutRule.log.contains(LOGGED_EVENT)
+            out?.contains(LOGGED_EVENT)
     }
 
     void 'exception is filtered and muted mismatch'() {
         given:
             ThrowsIllegalArgumentTester tester = context.getBean(ThrowsIllegalArgumentTester)
         when:
-            tester.filteredAndMutedMismatch()
+            String out = tapSystemErrAndOut {
+                tester.filteredAndMutedMismatch()
+            }
         then:
             thrown IllegalArgumentException
 
-            !systemOutRule.log.contains(LOGGED_EVENT)
+            !out?.contains(LOGGED_EVENT)
     }
 
 }
