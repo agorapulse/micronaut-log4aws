@@ -17,7 +17,6 @@
  */
 plugins {
     id 'java-library'
-    id 'org.openrewrite.rewrite' version '5.14.0'
 }
 
 config {
@@ -60,10 +59,5 @@ dependencies {
     testCompile "com.agorapulse:gru-http:$gruVersion"
     testCompile "net.bytebuddy:byte-buddy:$bytebuddyVersion"
     testCompile "org.objenesis:objenesis:$objenesisVersion"
-
 }
-
-//rewrite {
-//    activeRecipe('org.openrewrite.java.micronaut.Micronaut2to3Migration')
-//}
 

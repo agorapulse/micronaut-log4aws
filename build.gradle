@@ -21,6 +21,7 @@ plugins {
     id 'org.kordamp.gradle.codenarc'
     id 'org.kordamp.gradle.coveralls'
     id 'io.github.gradle-nexus.publish-plugin'
+    id 'org.openrewrite.rewrite' version '5.14.0'
 }
 
 if (!project.hasProperty('ossrhUsername'))      ext.ossrhUsername       = System.getenv('SONATYPE_USERNAME') ?: '**UNDEFINED**'
@@ -114,6 +115,14 @@ allprojects {
         exclude '**/*.json'
         exclude '***.yml'
     }
+}
+
+dependencies {
+    rewrite("org.openrewrite.recipe:rewrite-micronaut:1.3.0")
+}
+
+rewrite {
+    activeRecipe("org.openrewrite.java.micronaut.Micronaut2to3Migration")
 }
 
 subprojects { subproject ->
