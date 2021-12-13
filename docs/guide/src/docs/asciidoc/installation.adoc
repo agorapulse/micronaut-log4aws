@@ -8,14 +8,16 @@ First of all you need to add the dependency to your build file.
 [source,subs='verbatim,attributes']
 ----
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    // load just simple implementation with POJO client and reflection based parser
     implementation "com.agorapulse:micronaut-log4aws:{project-version}"
 }
 ----
+
+TIP: There are variants for older Micronaut versions as well. You can use `micronaut-1.0` or `micronaut-2.0` suffix for
+ different versions of Micronaut.
 
 Also be sure that your build file **does not contain any referrence to Logback**:
 

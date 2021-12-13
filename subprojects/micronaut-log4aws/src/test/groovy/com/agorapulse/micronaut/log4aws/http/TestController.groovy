@@ -30,7 +30,7 @@ class TestController {
 
     @Get('/{someparam}')
     HttpResponse<String> someparam(@PathVariable String someparam) {
-        HttpResponse.ok(someparam)
+        return HttpResponse.ok(someparam)
     }
 
     @Post('/{someerror}')

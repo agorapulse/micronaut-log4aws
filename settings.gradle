@@ -17,18 +17,18 @@
  */
 pluginManagement {
     repositories {
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
     }
     plugins {
-        id 'org.kordamp.gradle.groovy-project' version kordampPluginVersion
-        id 'org.kordamp.gradle.bintray'        version kordampPluginVersion
-        id 'org.kordamp.gradle.checkstyle'     version kordampPluginVersion
-        id 'org.kordamp.gradle.codenarc'       version kordampPluginVersion
-        id 'org.kordamp.gradle.guide'          version kordampPluginVersion
-        id 'org.kordamp.gradle.coveralls'      version kordampPluginVersion
-        id 'com.github.kt3k.coveralls'         version coverallsPluginVersion
-        id 'org.ajoberstar.git-publish'        version gitPublishPluginVersion
+        id 'org.kordamp.gradle.groovy-project'          version kordampPluginVersion
+        id 'org.kordamp.gradle.checkstyle'              version kordampPluginVersion
+        id 'org.kordamp.gradle.codenarc'                version kordampPluginVersion
+        id 'org.kordamp.gradle.guide'                   version kordampPluginVersion
+        id 'org.kordamp.gradle.coveralls'               version kordampPluginVersion
+        id 'com.github.kt3k.coveralls'                  version coverallsPluginVersion
+        id 'org.ajoberstar.git-publish'                 version gitPublishPluginVersion
+        id 'io.github.gradle-nexus.publish-plugin'      version nexusPluginVersion
     }
 }
 
