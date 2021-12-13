@@ -61,4 +61,4 @@ jobs:
           token: ${{ secrets.GITHUB_PERSONAL_TOKEN }}
           repository: ${{ matrix.repository }}
           event-type: ap-new-version-released-event
-          client-payload: '{ "group": "com.agorapulse", "module": "micronaut-log4aws", "version": "${{ steps.version.outputs.tag }}", "property" : "micronaut.log4aws.version", "github" : ${{ toJson(github) }} }'
+          client-payload: '{ "group": "com.agorapulse", "module": "micronaut-log4aws", "version": "${{ steps.version.outputs.tag }}-micronaut-1.0", "property" : "micronaut.log4aws.version", "github" : ${{ toJson(github) }} }'
