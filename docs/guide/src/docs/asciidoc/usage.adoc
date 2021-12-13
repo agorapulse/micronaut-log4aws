@@ -2,7 +2,28 @@
 [[_usage]]
 = Usage
 
+== Sentry Integration
 Sentry logger is initialised automatically during the application startup. There is also `SentryClient` instance available for injection if you need to access lower level API.
+
+The Sentry event is enriched with the following information if available:
+
+* `aws_region`
+* `aws_default_region`
+* `lambda_function_name`
+* `lambda_function_version`
+* `lambda_handler`
+* `lambda_execution_environment`
+* `lambda_log_group_name`
+* `lambda_log_stream_name`
+* `lambda_memory_size`
+* `req.path`
+* `req.method`
+* `req.remoteHost`
+* `req.serverHost`
+* `req.parameters`
+* `req.headers`
+
+== Ensure Exception Being Logged with @LogError
 
 All the errors have to be logged to be propagated to Sentry. You can use `LogErrors` around advice
 with your entry-point method to simplify the logging boilerplate:
