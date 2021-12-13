@@ -36,7 +36,7 @@ class SentryFilterSpec extends Specification {
     SentryClient client = Mock()
 
     void setup() {
-        context = ApplicationContext.build().build()
+        context = ApplicationContext.builder().build()
         context.registerSingleton(SentryClient, client)
 
         context.start()

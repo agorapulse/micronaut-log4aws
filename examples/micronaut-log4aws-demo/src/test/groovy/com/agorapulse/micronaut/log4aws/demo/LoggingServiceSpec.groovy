@@ -23,7 +23,7 @@ import spock.lang.Specification
 
 class LoggingServiceSpec extends Specification {
 
-    @AutoCleanup ApplicationContext context = ApplicationContext.build().build().start()
+    @AutoCleanup ApplicationContext context = ApplicationContext.builder().build().start()
 
     LoggingService service = context.getBean(LoggingService)
 

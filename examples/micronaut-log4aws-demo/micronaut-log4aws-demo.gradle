@@ -22,25 +22,26 @@ plugins {
 }
 
 dependencies {
-    compile project(':micronaut-log4aws')
+    implementation project(':micronaut-log4aws')
 
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    compile platform("io.micronaut:micronaut-bom:$micronautVersion")
+    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testCompile platform("io.micronaut:micronaut-bom:$micronautVersion")
 
     annotationProcessor "io.micronaut:micronaut-inject-java"
 
-    compile "io.micronaut:micronaut-core"
-    compile "io.micronaut:micronaut-function"
+    implementation "io.micronaut:micronaut-core"
+    implementation "io.micronaut:micronaut-function"
+    implementation 'javax.inject:javax.inject:1'
 
     compileOnly "io.micronaut:micronaut-inject-groovy"
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
-    testCompile "io.micronaut:micronaut-inject-groovy"
-    testCompile "com.github.stefanbirkner:system-lambda:$systemLambdaVersion"
-    testCompile("org.spockframework:spock-core") {
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "com.github.stefanbirkner:system-lambda:$systemLambdaVersion"
+    testImplementation("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 }
