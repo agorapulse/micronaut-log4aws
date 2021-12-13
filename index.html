@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="Vladimir Orany">
 <title>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
@@ -92,14 +92,19 @@ $(addBlockSwitches);
 <h1>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.1.5</span>
+<span id="revnumber">version 1.2.1-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a></li>
 <li><a href="#_installation">2. Installation</a></li>
-<li><a href="#_usage">3. Usage</a></li>
+<li><a href="#_usage">3. Usage</a>
+<ul class="sectlevel2">
+<li><a href="#_sentry_integration">3.1. Sentry Integration</a></li>
+<li><a href="#_ensure_exception_being_logged_with_logerror">3.2. Ensure Exception Being Logged with @LogError</a></li>
+</ul>
+</li>
 <li><a href="#_links">4. Links</a></li>
 </ul>
 </div>
@@ -124,14 +129,26 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 <div class="title">Gradle Installation</div>
 <div class="content">
 <pre class="prettyprint highlight"><code>repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    // load just simple implementation with POJO client and reflection based parser
-    implementation "com.agorapulse:micronaut-log4aws:1.1.5"
+    implementation "com.agorapulse:micronaut-log4aws:1.2.1-micronaut-3.0"
 }</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+There are variants for older Micronaut versions as well. You can use <code>micronaut-1.0</code> or <code>micronaut-2.0</code> suffix for
+ different versions of Micronaut.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Also be sure that your build file <strong>does not contain any referrence to Logback</strong>:</p>
@@ -152,7 +169,7 @@ and replace it with a new file <code>log4j2.xml</code> with following content. F
 <div class="listingblock">
 <div class="title">Log4J2 Configuration</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<pre class="prettyprint highlight"><code data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;Configuration packages="org.apache.logging.log4j.core,io.sentry.log4j2,com.amazonaws.services.lambda.runtime.log4j2"&gt;
     &lt;Appenders&gt;
         &lt;Lambda name="Lambda"&gt;
@@ -197,7 +214,7 @@ The library can configure <code>Sentry</code> appender for you if you forget to 
 <div class="listingblock">
 <div class="title">sentry.properties</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties"># guarantees all events are logged before the function execution is finished
+<pre class="prettyprint highlight"><code data-lang="properties"># guarantees all events are logged before the function execution is finished
 async=false
 
 # you should consider adding your packages here to enable filtering of stack traces in Sentry
@@ -210,9 +227,66 @@ async=false
 <div class="sect1">
 <h2 id="_usage"><a class="anchor" href="#_usage"></a>3. Usage</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_sentry_integration"><a class="anchor" href="#_sentry_integration"></a>3.1. Sentry Integration</h3>
 <div class="paragraph">
 <p>Sentry logger is initialised automatically during the application startup. There is also <code>SentryClient</code> instance available for injection if you need to access lower level API.</p>
 </div>
+<div class="paragraph">
+<p>The Sentry event is enriched with the following information if available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>aws_region</code></p>
+</li>
+<li>
+<p><code>aws_default_region</code></p>
+</li>
+<li>
+<p><code>lambda_function_name</code></p>
+</li>
+<li>
+<p><code>lambda_function_version</code></p>
+</li>
+<li>
+<p><code>lambda_handler</code></p>
+</li>
+<li>
+<p><code>lambda_execution_environment</code></p>
+</li>
+<li>
+<p><code>lambda_log_group_name</code></p>
+</li>
+<li>
+<p><code>lambda_log_stream_name</code></p>
+</li>
+<li>
+<p><code>lambda_memory_size</code></p>
+</li>
+<li>
+<p><code>req.path</code></p>
+</li>
+<li>
+<p><code>req.method</code></p>
+</li>
+<li>
+<p><code>req.remoteHost</code></p>
+</li>
+<li>
+<p><code>req.serverHost</code></p>
+</li>
+<li>
+<p><code>req.parameters</code></p>
+</li>
+<li>
+<p><code>req.headers</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ensure_exception_being_logged_with_logerror"><a class="anchor" href="#_ensure_exception_being_logged_with_logerror"></a>3.2. Ensure Exception Being Logged with @LogError</h3>
 <div class="paragraph">
 <p>All the errors have to be logged to be propagated to Sentry. You can use <code>LogErrors</code> around advice
 with your entry-point method to simplify the logging boilerplate:</p>
@@ -220,7 +294,7 @@ with your entry-point method to simplify the logging boilerplate:</p>
 <div class="listingblock">
 <div class="title">Using LogError Annotation</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
+<pre class="prettyprint highlight"><code data-lang="java">/**
 * This class is an entrypoint called by AWS Lambda. Keep the code to minimum.
 * Method handleRequest is called directly by the AWS Lambda container.
 */
@@ -262,6 +336,7 @@ The annotation applied to the function class itself has no effect as the functio
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="_links"><a class="anchor" href="#_links"></a>4. Links</h2>
 <div class="sectionbody">
@@ -276,12 +351,11 @@ The annotation applied to the function class itself has no effect as the functio
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.1.5<br>
-Last updated 2021-03-09 07:41:17 UTC
+Version 1.2.1-micronaut-3.0<br>
+Last updated 2021-12-13 10:20:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
-<script>prettyPrint()</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
 </body>
 </html>
