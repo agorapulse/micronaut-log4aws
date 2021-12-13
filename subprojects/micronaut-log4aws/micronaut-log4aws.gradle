@@ -42,9 +42,9 @@ dependencies {
 
     api "io.sentry:sentry-log4j2:$sentryVersion"
     api group: 'com.amazonaws', name: 'aws-lambda-java-log4j2', version: awsLog4jVersion
-    api 'org.apache.logging.log4j:log4j-slf4j18-impl'
-    api 'org.apache.logging.log4j:log4j-api'
-    api 'org.apache.logging.log4j:log4j-core'
+    api "org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion"
+    api "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    api "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
     implementation "io.micronaut:micronaut-core"
 
