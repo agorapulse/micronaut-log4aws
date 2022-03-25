@@ -21,23 +21,22 @@ import com.agorapulse.gru.Gru
 import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
-import io.sentry.SentryClient
-import io.sentry.event.helper.EventBuilderHelper
+import io.sentry.IHub
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 class SentryFilterSpec extends Specification {
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     @AutoCleanup ApplicationContext context
     @AutoCleanup EmbeddedServer server
 
-    SentryClient client = Mock()
+    IHub hub = Mock()
 
     void setup() {
         context = ApplicationContext.builder().build()
-        context.registerSingleton(SentryClient, client)
+        context.registerSingleton(IHub, hub)
 
         context.start()
 
@@ -58,13 +57,10 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            1 * client.addBuilderHelper(_)
-            1 * client.removeBuilderHelper(_)
-
-            0 * _._
+            1 * hub.addBreadcrumb(_)
+            1 * hub.configureScope(_)
     }
 
-    @SuppressWarnings('Println')
     void 'try error message'() {
         when:
             gru.test {
@@ -76,15 +72,8 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            _ * client.addBuilderHelper(_) >> { EventBuilderHelper helper ->
-                println "adding $helper"
-            }
-
-            _ * client.removeBuilderHelper(_) >> { EventBuilderHelper helper ->
-                println "removing $helper"
-            }
-
-            0 * _._
+            _ * hub.addBreadcrumb(_)
+            _ * hub.configureScope(_)
     }
 
 }

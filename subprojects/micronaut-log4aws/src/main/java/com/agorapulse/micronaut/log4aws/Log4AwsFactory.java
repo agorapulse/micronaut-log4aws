@@ -20,13 +20,11 @@ package com.agorapulse.micronaut.log4aws;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.env.Environment;
+import io.micronaut.context.annotation.Value;
+import io.sentry.EventProcessor;
+import io.sentry.IHub;
 import io.sentry.Sentry;
-import io.sentry.SentryClient;
-import io.sentry.config.Lookup;
-import io.sentry.connection.EventSendCallback;
-import io.sentry.dsn.Dsn;
-import io.sentry.event.Event;
+import io.sentry.SentryOptions;
 import io.sentry.log4j2.SentryAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -34,13 +32,10 @@ import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static io.sentry.DefaultSentryClientFactory.ASYNC_OPTION;
 
 /**
  * Initializes Sentry for Micronaut.
@@ -48,7 +43,7 @@ import static io.sentry.DefaultSentryClientFactory.ASYNC_OPTION;
 @Factory
 public class Log4AwsFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Log4AwsFactory.class);
+    private static final String APPENDER_NAME = "Sentry";
 
     /**
      * Automatically registers sentry logging during application context startup.
@@ -56,22 +51,21 @@ public class Log4AwsFactory {
      */
     @Bean
     @Context
-    public SentryAppender sentryAppender(Environment environment) {
-        boolean async = !Boolean.FALSE.toString().equals(Lookup.getDefault().get(ASYNC_OPTION));
-        boolean dsnProvided = !Dsn.DEFAULT_DSN.equals(Dsn.dsnLookup());
-        boolean function = environment.getActiveNames().contains(Environment.FUNCTION);
-
-        if (async && dsnProvided && function) {
-            // in future releases
-            // throw new IllegalStateException("Sentry not configured correctly for synchornous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
-            LOGGER.error("Sentry not configured correctly for synchronous calls! Please, create file 'sentry.properties' and add there a line 'async=false'");
-        }
-
+    public SentryAppender sentryAppender(IHub hub, @Value("${sentry.dsn:}") String sentryDsn) {
         return initializeAppenderIfMissing(
             SentryAppender.class,
             Level.WARN,
-            SentryAppender.APPENDER_NAME,
-            SentryAppender::new
+            APPENDER_NAME,
+            () -> new SentryAppender(
+                APPENDER_NAME,
+                null,
+                sentryDsn,
+                null,
+                null,
+                null,
+                null,
+                hub
+            )
         );
     }
 
@@ -84,26 +78,18 @@ public class Log4AwsFactory {
      */
     @Bean
     @Context
-    public SentryClient sentryClient() {
-        Sentry.init();
-
-        SentryClient client = Sentry.getStoredClient();
-        client.addBuilderHelper(new AwsLambdaEventBuildHelper());
-        client.addEventSendCallback(new EventSendCallback() {
-            @Override
-            public void onFailure(Event event, Exception exception) {
-                LOGGER.error("Failed to send event to Sentry: " + event, exception);
-            }
-
-            @Override
-            public void onSuccess(Event event) {
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Event sent to Sentry: " + event);
-                }
-            }
+    public IHub sentryClient(List<Sentry.OptionsConfiguration<SentryOptions>> configurations, @Value("${sentry.dsn:}") String sentryDsn) {
+        Sentry.init(options -> {
+            options.setDsn(sentryDsn);
+            configurations.forEach(c -> c.configure(options));
         });
+        return Sentry.getCurrentHub();
+    }
 
-        return client;
+    @Bean
+    @Context
+    public Sentry.OptionsConfiguration<SentryOptions> eventProcessors(List<EventProcessor> processors) {
+        return options -> processors.forEach(options::addEventProcessor);
     }
 
     private <A extends Appender> A initializeAppenderIfMissing(

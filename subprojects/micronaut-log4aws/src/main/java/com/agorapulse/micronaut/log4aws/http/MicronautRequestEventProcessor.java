@@ -18,41 +18,43 @@
 package com.agorapulse.micronaut.log4aws.http;
 
 import io.micronaut.http.HttpRequest;
-import io.sentry.event.EventBuilder;
-import io.sentry.event.helper.EventBuilderHelper;
+import io.sentry.EventProcessor;
+import io.sentry.SentryEvent;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class MicronautRequestBuildHelper implements EventBuilderHelper {
+public class MicronautRequestEventProcessor implements EventProcessor {
 
     private static final List<String> SENSITIVE_HEADERS = Arrays.asList("X-FORWARDED-FOR", "AUTHORIZATION", "COOKIE");
 
-    private static final List<String> SENSITIVE_PARAMS = Arrays.asList("TOKEN");
+    private static final List<String> SENSITIVE_PARAMS = Collections.singletonList("TOKEN");
 
     private final HttpRequest<?> request;
 
-    public MicronautRequestBuildHelper(HttpRequest<?> request) {
+    public MicronautRequestEventProcessor(HttpRequest<?> request) {
         this.request = request;
     }
 
     @Override
-    public void helpBuildingEvent(EventBuilder eventBuilder) {
-        eventBuilder.withTag("req.path", request.getPath());
-        eventBuilder.withTag("req.method", request.getMethod().toString());
+    public SentryEvent process(SentryEvent event, Object hint) {
+        event.setTag("req.path", request.getPath());
+        event.setTag("req.method", request.getMethod().toString());
 
+        // it can be actually null on read timeout
         if (request.getRemoteAddress() != null) {
-            // it can be actually null on read timeout
-            eventBuilder.withTag("req.remoteHost", request.getRemoteAddress().getHostString());
+            event.setTag("req.remoteHost", request.getRemoteAddress().getHostString());
         }
 
-        eventBuilder.withTag("req.serverHost", request.getServerAddress().getHostString());
-        eventBuilder.withExtra("req.parameters", resolveParameters(request));
-        eventBuilder.withExtra("req.headers", resolveHeaders(request));
+        event.setTag("req.serverHost", request.getServerAddress().getHostString());
+        event.setExtra("req.parameters", resolveParameters(request));
+        event.setExtra("req.headers", resolveHeaders(request));
+        return event;
     }
 
     private static Map<String, String> resolveParameters(final HttpRequest<?> request) {
