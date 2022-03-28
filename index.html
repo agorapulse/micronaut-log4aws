@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.2.6-micronaut-3.0</span>
+<span id="revnumber">version 2.0.0-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -133,7 +133,7 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 }
 
 dependencies {
-    implementation "com.agorapulse:micronaut-log4aws:1.2.6-micronaut-3.0"
+    implementation "com.agorapulse:micronaut-log4aws:2.0.0-micronaut-3.0"
 }</code></pre>
 </div>
 </div>
@@ -214,12 +214,8 @@ The library can configure <code>Sentry</code> appender for you if you forget to 
 <div class="listingblock">
 <div class="title">sentry.properties</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="properties"># guarantees all events are logged before the function execution is finished
-async=false
-
-# you should consider adding your packages here to enable filtering of stack traces in Sentry
-
-# stacktrace.app.packages=agorapulse,com.agorapulse</code></pre>
+<pre class="prettyprint highlight"><code data-lang="properties"># you should consider adding your packages here to enable filtering of stack traces in Sentry
+# in-app-includes=agorapulse,com.agorapulse</code></pre>
 </div>
 </div>
 </div>
@@ -351,8 +347,8 @@ The annotation applied to the function class itself has no effect as the functio
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.2.6-micronaut-3.0<br>
-Last updated 2021-12-29 08:58:55 UTC
+Version 2.0.0-micronaut-3.0<br>
+Last updated 2022-03-28 07:59:35 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

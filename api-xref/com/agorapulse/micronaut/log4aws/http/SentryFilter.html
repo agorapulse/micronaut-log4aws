@@ -9,7 +9,7 @@
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * SPDX-License-Identifier: Apache-2.0</em>
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> *</em>
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> * Copyright 2020-2021 Agorapulse.</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> * Copyright 2020-2022 Agorapulse.</em>
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License");</em>
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
@@ -31,36 +31,33 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.micronaut.http.filter.HttpServerFilter;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.micronaut.http.filter.ServerFilterChain;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.reactivex.Flowable;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.sentry.SentryClient;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.sentry.event.helper.EventBuilderHelper;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.sentry.Breadcrumb;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.sentry.IHub;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.reactivestreams.Publisher;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.atomic.AtomicReference;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  @Filter(<span class="jxr_string">"/**"</span>)
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="SentryFilter" href="../../../../../com/agorapulse/micronaut/log4aws/http/SentryFilter.html#SentryFilter">SentryFilter</a> <strong class="jxr_keyword">implements</strong> HttpServerFilter {
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  @Filter(<span class="jxr_string">"/**"</span>)
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="SentryFilter" href="../../../../../com/agorapulse/micronaut/log4aws/http/SentryFilter.html#SentryFilter">SentryFilter</a> <strong class="jxr_keyword">implements</strong> HttpServerFilter {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IHub hub;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> SentryClient client;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">public</strong> <a name="SentryFilter" href="../../../../../com/agorapulse/micronaut/log4aws/http/SentryFilter.html#SentryFilter">SentryFilter</a>(SentryClient client) {
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>          <strong class="jxr_keyword">this</strong>.client = client;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      }
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Override
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilter(HttpRequest&lt;?&gt; request, ServerFilterChain chain) {
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>          AtomicReference&lt;EventBuilderHelper&gt; helperReference = <strong class="jxr_keyword">new</strong> AtomicReference&lt;&gt;(<strong class="jxr_keyword">new</strong> <a name="MicronautRequestBuildHelper" href="../../../../../com/agorapulse/micronaut/log4aws/http/MicronautRequestBuildHelper.html#MicronautRequestBuildHelper">MicronautRequestBuildHelper</a>(request));
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">return</strong> Flowable
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>              .just(request)
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>              .doOnNext(r -&gt; {
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>                  client.addBuilderHelper(helperReference.get());
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>              })
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>              .switchMap(chain::proceed)
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>              .doOnNext(res -&gt; {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>                  client.removeBuilderHelper(helperReference.get());
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>              });
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      }
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  }
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <a name="SentryFilter" href="../../../../../com/agorapulse/micronaut/log4aws/http/SentryFilter.html#SentryFilter">SentryFilter</a>(IHub hub) {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">this</strong>.hub = hub;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      }
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      @Override
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">public</strong> Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilter(HttpRequest&lt;?&gt; request, ServerFilterChain chain) {
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">return</strong> Flowable
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>              .just(request)
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>              .doOnNext(r -&gt; {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>                  hub.pushScope();
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>                  hub.addBreadcrumb(Breadcrumb.http(request.getUri().toString(), request.getMethodName()));
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>                  hub.configureScope(scope -&gt; scope.addEventProcessor(<strong class="jxr_keyword">new</strong> <a name="MicronautRequestEventProcessor" href="../../../../../com/agorapulse/micronaut/log4aws/http/MicronautRequestEventProcessor.html#MicronautRequestEventProcessor">MicronautRequestEventProcessor</a>(request)));
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>              })
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>              .switchMap(chain::proceed)
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>              .doOnNext(res -&gt; hub.popScope());
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  }
 </pre>
 <hr/>
 <div id="footer"></div>
