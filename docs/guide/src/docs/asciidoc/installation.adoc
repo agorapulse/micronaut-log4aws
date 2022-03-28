@@ -47,10 +47,6 @@ As a last step you need to create a file `sentry.properties` for sentry configur
 .sentry.properties
 [source,properties,subs='verbatim,attributes']
 ----
-# guarantees all events are logged before the function execution is finished
-async=false
-
 # you should consider adding your packages here to enable filtering of stack traces in Sentry
-
-# stacktrace.app.packages=agorapulse,com.agorapulse
+# in-app-includes=agorapulse,com.agorapulse
 ----

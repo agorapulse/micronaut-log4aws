@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2021 Agorapulse.
+ * Copyright 2020-2022 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,33 +23,30 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.reactivex.Flowable;
-import io.sentry.SentryClient;
-import io.sentry.event.helper.EventBuilderHelper;
+import io.sentry.Breadcrumb;
+import io.sentry.IHub;
 import org.reactivestreams.Publisher;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 @Filter("/**")
 public class SentryFilter implements HttpServerFilter {
 
-    private final SentryClient client;
+    private final IHub hub;
 
-    public SentryFilter(SentryClient client) {
-        this.client = client;
+    public SentryFilter(IHub hub) {
+        this.hub = hub;
     }
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        AtomicReference<EventBuilderHelper> helperReference = new AtomicReference<>(new MicronautRequestBuildHelper(request));
         return Flowable
             .just(request)
             .doOnNext(r -> {
-                client.addBuilderHelper(helperReference.get());
+                hub.pushScope();
+                hub.addBreadcrumb(Breadcrumb.http(request.getUri().toString(), request.getMethodName()));
+                hub.configureScope(scope -> scope.addEventProcessor(new MicronautRequestEventProcessor(request)));
             })
             .switchMap(chain::proceed)
-            .doOnNext(res -> {
-                client.removeBuilderHelper(helperReference.get());
-            });
+            .doOnNext(res -> hub.popScope());
     }
 
 }
