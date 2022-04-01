@@ -26,7 +26,7 @@ import static com.github.stefanbirkner.systemlambda.SystemLambda.*
 
 class LogErrorInterceptorSpec extends Specification {
 
-    private static final String LOGGED_EVENT = 'ERROR ThrowsIllegalArgumentTester:44 - Exception executing method'
+    private static final String LOGGED_EVENT = 'ERROR ThrowsIllegalArgumentTester:45 - Exception executing method'
 
     @AutoCleanup ApplicationContext context = ApplicationContext.run()
 
