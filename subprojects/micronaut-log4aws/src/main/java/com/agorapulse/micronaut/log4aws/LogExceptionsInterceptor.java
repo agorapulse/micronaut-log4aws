@@ -20,6 +20,7 @@ package com.agorapulse.micronaut.log4aws;
 import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.AnnotationValue;
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,8 @@ public class LogExceptionsInterceptor implements MethodInterceptor<Object, Objec
                 }
             }
             throw th;
+        } finally {
+            Sentry.flush(1000);
         }
     }
 }
