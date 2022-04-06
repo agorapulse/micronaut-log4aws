@@ -21,6 +21,7 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Value;
+import io.micronaut.core.util.StringUtils;
 import io.sentry.EventProcessor;
 import io.sentry.IHub;
 import io.sentry.Sentry;
@@ -51,7 +52,11 @@ public class Log4AwsFactory {
      */
     @Bean
     @Context
-    public SentryAppender sentryAppender(IHub hub, @Value("${sentry.dsn:}") String sentryDsn) {
+    public SentryAppender sentryAppender(
+        IHub hub,
+        @Value("${sentry.dsn:}") String sentryDsn,
+        @Value("${SENTRY_DSN:}") String sentryDsnLegacy
+    ) {
         return initializeAppenderIfMissing(
             SentryAppender.class,
             Level.WARN,
@@ -59,7 +64,7 @@ public class Log4AwsFactory {
             () -> new SentryAppender(
                 APPENDER_NAME,
                 null,
-                sentryDsn,
+                StringUtils.isNotEmpty(sentryDsn) ? sentryDsn : sentryDsnLegacy,
                 null,
                 null,
                 null,
@@ -78,9 +83,15 @@ public class Log4AwsFactory {
      */
     @Bean
     @Context
-    public IHub sentryClient(List<Sentry.OptionsConfiguration<SentryOptions>> configurations, @Value("${sentry.dsn:}") String sentryDsn) {
+    public IHub sentryClient(
+        List<Sentry.OptionsConfiguration<SentryOptions>> configurations,
+        @Value("${sentry.dsn:}") String sentryDsn,
+        @Value("${SENTRY_DSN:}") String sentryDsnLegacy
+    ) {
         Sentry.init(options -> {
-            options.setDsn(sentryDsn);
+            options.setDsn(
+                StringUtils.isNotEmpty(sentryDsn) ? sentryDsn : sentryDsnLegacy
+            );
             configurations.forEach(c -> c.configure(options));
         });
         return Sentry.getCurrentHub();
