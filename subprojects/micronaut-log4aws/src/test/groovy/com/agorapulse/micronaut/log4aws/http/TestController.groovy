@@ -23,7 +23,12 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.Put
+import io.micronaut.validation.Validated
 
+import javax.validation.constraints.NotBlank
+
+@Validated
 @CompileStatic
 @Controller('/test')
 class TestController {
@@ -37,6 +42,11 @@ class TestController {
     @SuppressWarnings('ThrowRuntimeException')
     HttpResponse<String> someerror(@PathVariable String someerror) {
         throw new RuntimeException(someerror)
+    }
+
+    @Put('/validated')
+    HttpResponse<String> validationIssue(@NotBlank String text) {
+        return HttpResponse.ok(text)
     }
 
 }

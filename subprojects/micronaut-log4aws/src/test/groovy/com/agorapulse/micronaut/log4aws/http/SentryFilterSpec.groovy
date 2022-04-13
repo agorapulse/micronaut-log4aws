@@ -25,6 +25,8 @@ import io.sentry.IHub
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
+import java.util.concurrent.atomic.AtomicInteger
+
 class SentryFilterSpec extends Specification {
 
     @AutoCleanup Gru gru = Gru.create(Http.create(this))
@@ -57,11 +59,18 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
+            1 * hub.pushScope()
             1 * hub.addBreadcrumb(_)
             1 * hub.configureScope(_)
+            1 * hub.popScope()
     }
 
     void 'try error message'() {
+        given:
+            AtomicInteger pushCalls = new AtomicInteger()
+            AtomicInteger breadcrumbsCalls = new AtomicInteger()
+            AtomicInteger configureScopeCalls = new AtomicInteger()
+            AtomicInteger popCalls = new AtomicInteger()
         when:
             gru.test {
                 post('/test/parameter')
@@ -72,8 +81,62 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            _ * hub.addBreadcrumb(_)
-            _ * hub.configureScope(_)
+            _ * hub.pushScope() >> {
+                pushCalls.incrementAndGet()
+            }
+            _ * hub.addBreadcrumb(_)  >> {
+                breadcrumbsCalls.incrementAndGet()
+            }
+            _ * hub.configureScope(_) >> {
+                configureScopeCalls.incrementAndGet()
+            }
+            _ * hub.popScope() >> {
+                popCalls.incrementAndGet()
+            }
+
+        expect:
+            // the filter is only called once for Micronaut 3.x but twice for Micronaut 1.x and 2.x
+            pushCalls.get() in 1..2
+            pushCalls.get() == breadcrumbsCalls.get()
+            pushCalls.get() == configureScopeCalls.get()
+            pushCalls.get() == popCalls.get()
+    }
+
+    void 'try validation'() {
+        given:
+            AtomicInteger pushCalls = new AtomicInteger()
+            AtomicInteger breadcrumbsCalls = new AtomicInteger()
+            AtomicInteger configureScopeCalls = new AtomicInteger()
+            AtomicInteger popCalls = new AtomicInteger()
+        when:
+            gru.test {
+                put('/test/validated')
+                expect {
+                    status BAD_REQUEST
+                }
+            }
+        then:
+            gru.verify()
+
+            _ * hub.pushScope() >> {
+                pushCalls.incrementAndGet()
+            }
+            _ * hub.addBreadcrumb(_)  >> {
+                breadcrumbsCalls.incrementAndGet()
+            }
+            _ * hub.configureScope(_) >> {
+                configureScopeCalls.incrementAndGet()
+            }
+            _ * hub.popScope() >> {
+                popCalls.incrementAndGet()
+            }
+
+        expect:
+            // the filter is only called once for Micronaut 3.x but twice for Micronaut 1.x and 2.x
+            pushCalls.get() in 1..2
+            pushCalls.get() == breadcrumbsCalls.get()
+            pushCalls.get() == configureScopeCalls.get()
+            pushCalls.get() == popCalls.get()
     }
 
 }
