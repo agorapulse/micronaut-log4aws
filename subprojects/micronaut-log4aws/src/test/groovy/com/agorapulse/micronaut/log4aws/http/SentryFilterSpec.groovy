@@ -57,8 +57,10 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
+            1 * hub.pushScope()
             1 * hub.addBreadcrumb(_)
             1 * hub.configureScope(_)
+            1 * hub.popScope()
     }
 
     void 'try error message'() {
@@ -72,8 +74,27 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            _ * hub.addBreadcrumb(_)
-            _ * hub.configureScope(_)
+            2 * hub.pushScope()
+            2 * hub.addBreadcrumb(_)
+            2 * hub.configureScope(_)
+            2 * hub.popScope()
+    }
+
+    void 'try validation'() {
+        when:
+            gru.test {
+                put('/test/validated')
+                expect {
+                    status BAD_REQUEST
+                }
+            }
+        then:
+            gru.verify()
+
+            2 * hub.pushScope()
+            2 * hub.addBreadcrumb(_)
+            2 * hub.configureScope(_)
+            2 * hub.popScope()
     }
 
 }

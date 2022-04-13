@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.log4aws.http;
 
+import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
@@ -37,6 +38,11 @@ public class SentryFilter implements HttpServerFilter {
     }
 
     @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE + 1000;
+    }
+
+    @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
         return Flowable
             .just(request)
@@ -46,6 +52,7 @@ public class SentryFilter implements HttpServerFilter {
                 hub.configureScope(scope -> scope.addEventProcessor(new MicronautRequestEventProcessor(request)));
             })
             .switchMap(chain::proceed)
+            .doOnError(throwable -> hub.popScope())
             .doOnNext(res -> hub.popScope());
     }
 
