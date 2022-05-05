@@ -22,10 +22,9 @@ import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.sentry.IHub
+import io.sentry.Scope
 import spock.lang.AutoCleanup
 import spock.lang.Specification
-
-import java.util.concurrent.atomic.AtomicInteger
 
 class SentryFilterSpec extends Specification {
 
@@ -34,7 +33,7 @@ class SentryFilterSpec extends Specification {
     @AutoCleanup ApplicationContext context
     @AutoCleanup EmbeddedServer server
 
-    IHub hub = Mock()
+    IHub hub = new MockHub()
 
     void setup() {
         context = ApplicationContext.builder().build()
@@ -59,18 +58,17 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            1 * hub.pushScope()
-            1 * hub.addBreadcrumb(_)
-            1 * hub.configureScope(_)
-            1 * hub.popScope()
+            hub.pointer == -1
+            hub.scopes.size() == 1
+
+        when:
+            Scope scope = hub.scopes[0]
+        then:
+            scope.breadcrumbs.size() == 1
+            scope.eventProcessors.size() == 1
     }
 
     void 'try error message'() {
-        given:
-            AtomicInteger pushCalls = new AtomicInteger()
-            AtomicInteger breadcrumbsCalls = new AtomicInteger()
-            AtomicInteger configureScopeCalls = new AtomicInteger()
-            AtomicInteger popCalls = new AtomicInteger()
         when:
             gru.test {
                 post('/test/parameter')
@@ -81,33 +79,18 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            _ * hub.pushScope() >> {
-                pushCalls.incrementAndGet()
-            }
-            _ * hub.addBreadcrumb(_)  >> {
-                breadcrumbsCalls.incrementAndGet()
-            }
-            _ * hub.configureScope(_) >> {
-                configureScopeCalls.incrementAndGet()
-            }
-            _ * hub.popScope() >> {
-                popCalls.incrementAndGet()
-            }
-
-        expect:
+            hub.pointer == -1
             // the filter is only called once for Micronaut 3.x but twice for Micronaut 1.x and 2.x
-            pushCalls.get() in 1..2
-            pushCalls.get() == breadcrumbsCalls.get()
-            pushCalls.get() == configureScopeCalls.get()
-            pushCalls.get() == popCalls.get()
+            hub.scopes.size() in 1..2
+
+        when:
+            Scope scope = hub.scopes[0]
+        then:
+            scope.breadcrumbs.size() in 1
+            scope.eventProcessors.size() == 1
     }
 
     void 'try validation'() {
-        given:
-            AtomicInteger pushCalls = new AtomicInteger()
-            AtomicInteger breadcrumbsCalls = new AtomicInteger()
-            AtomicInteger configureScopeCalls = new AtomicInteger()
-            AtomicInteger popCalls = new AtomicInteger()
         when:
             gru.test {
                 put('/test/validated')
@@ -118,25 +101,15 @@ class SentryFilterSpec extends Specification {
         then:
             gru.verify()
 
-            _ * hub.pushScope() >> {
-                pushCalls.incrementAndGet()
-            }
-            _ * hub.addBreadcrumb(_)  >> {
-                breadcrumbsCalls.incrementAndGet()
-            }
-            _ * hub.configureScope(_) >> {
-                configureScopeCalls.incrementAndGet()
-            }
-            _ * hub.popScope() >> {
-                popCalls.incrementAndGet()
-            }
-
-        expect:
+            hub.pointer == -1
             // the filter is only called once for Micronaut 3.x but twice for Micronaut 1.x and 2.x
-            pushCalls.get() in 1..2
-            pushCalls.get() == breadcrumbsCalls.get()
-            pushCalls.get() == configureScopeCalls.get()
-            pushCalls.get() == popCalls.get()
+            hub.scopes.size() in 1..2
+
+        when:
+            Scope scope = hub.scopes[0]
+        then:
+            scope.breadcrumbs.size() in 1
+            scope.eventProcessors.size() == 1
     }
 
 }

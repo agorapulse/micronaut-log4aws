@@ -28,6 +28,8 @@ import io.sentry.Breadcrumb;
 import io.sentry.IHub;
 import org.reactivestreams.Publisher;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Filter("/**")
 public class SentryFilter implements HttpServerFilter {
 
@@ -46,14 +48,15 @@ public class SentryFilter implements HttpServerFilter {
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
         return Flowable
             .just(request)
-            .doOnNext(r -> {
-                hub.pushScope();
-                hub.addBreadcrumb(Breadcrumb.http(request.getUri().toString(), request.getMethodName()));
-                hub.configureScope(scope -> scope.addEventProcessor(new MicronautRequestEventProcessor(request)));
-            })
-            .switchMap(chain::proceed)
-            .doOnError(throwable -> hub.popScope())
-            .doOnNext(res -> hub.popScope());
+            .switchMap(r -> {
+                AtomicReference<Publisher<MutableHttpResponse<?>>> responsePublisher = new AtomicReference<>();
+                hub.withScope(scope -> {
+                    scope.addEventProcessor(new MicronautRequestEventProcessor(request));
+                    scope.addBreadcrumb(Breadcrumb.http(request.getUri().toString(), request.getMethodName()));
+                    responsePublisher.set(chain.proceed(r));
+                });
+                return responsePublisher.get();
+            });
     }
 
 }
