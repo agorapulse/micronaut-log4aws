@@ -2,7 +2,7 @@
 [[_installation]]
 = Installation
 
-First of all you need to add the dependency to your build file.
+First, add this dependency to your build file.
 
 .Gradle Installation
 [source,subs='verbatim,attributes']
@@ -19,7 +19,7 @@ dependencies {
 TIP: There are variants for older Micronaut versions as well. You can use `micronaut-1.0` or `micronaut-2.0` suffix for
  different versions of Micronaut.
 
-Also be sure that your build file **does not contain any referrence to Logback**:
+Also be sure that your build file **does not contain any reference to Logback**:
 
 .Build File Cleanup
 [source,subs='verbatim,attributes']
@@ -33,20 +33,19 @@ dependencies {
 Then remove Logback configuration file from `src/main/resources/logback.groovy`
 and replace it with a new file `log4j2.xml` with following content. Feel free to update the file to fit your needs.
 
-
 .Log4J2 Configuration
 [source,xml,subs='verbatim,attributes']
 ----
 include::../../../../../subprojects/micronaut-log4aws/src/test/resources/log4j2.xml[lines=1;21..51]
 ----
 
-TIP: The library can configure `Sentry` appender for you if you forget to specify it in the configuration file.
+TIP: The library can configure `Sentry` appender for you if you don't specify it in the configuration file.
 
-As a last step you need to create a file `sentry.properties` for sentry configuration - also in `src/main/resources`:
+Finally, create `src/main/resources/sentry.properties` for sentry configuration:
 
 .sentry.properties
 [source,properties,subs='verbatim,attributes']
 ----
-# you should consider adding your packages here to enable filtering of stack traces in Sentry
+# consider adding your packages here to enable filtering of stack traces in Sentry
 # in-app-includes=agorapulse,com.agorapulse
 ----

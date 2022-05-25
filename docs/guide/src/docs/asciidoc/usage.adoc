@@ -3,9 +3,10 @@
 = Usage
 
 == Sentry Integration
-Sentry logger is initialised automatically during the application startup. There is also `SentryClient` instance available for injection if you need to access lower level API.
 
-The Sentry event is enriched with the following information if available:
+Sentry logger is initialised automatically at application startup. A `SentryClient` bean is available for injection to access the lower-level API.
+
+Sentry events are enriched with the following information if available:
 
 * `aws_region`
 * `aws_default_region`
@@ -60,4 +61,3 @@ class ReportsService implements RequestHandler<SQSEvent, Void> {
 ----
 
 WARNING: The annotation applied to the function class itself has no effect as the function class is executed by AWS Lambda container.
-
