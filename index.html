@@ -123,7 +123,7 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 <h2 id="_installation"><a class="anchor" href="#_installation"></a>2. Installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>First of all you need to add the dependency to your build file.</p>
+<p>First, add this dependency to your build file.</p>
 </div>
 <div class="listingblock">
 <div class="title">Gradle Installation</div>
@@ -151,7 +151,7 @@ There are variants for older Micronaut versions as well. You can use <code>micro
 </table>
 </div>
 <div class="paragraph">
-<p>Also be sure that your build file <strong>does not contain any referrence to Logback</strong>:</p>
+<p>Also be sure that your build file <strong>does not contain any reference to Logback</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="title">Build File Cleanup</div>
@@ -203,18 +203,18 @@ and replace it with a new file <code>log4j2.xml</code> with following content. F
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-The library can configure <code>Sentry</code> appender for you if you forget to specify it in the configuration file.
+The library can configure <code>Sentry</code> appender for you if you don&#8217;t specify it in the configuration file.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>As a last step you need to create a file <code>sentry.properties</code> for sentry configuration - also in <code>src/main/resources</code>:</p>
+<p>Finally, create <code>src/main/resources/sentry.properties</code> for sentry configuration:</p>
 </div>
 <div class="listingblock">
 <div class="title">sentry.properties</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="properties"># you should consider adding your packages here to enable filtering of stack traces in Sentry
+<pre class="prettyprint highlight"><code data-lang="properties"># consider adding your packages here to enable filtering of stack traces in Sentry
 # in-app-includes=agorapulse,com.agorapulse</code></pre>
 </div>
 </div>
@@ -226,10 +226,10 @@ The library can configure <code>Sentry</code> appender for you if you forget to 
 <div class="sect2">
 <h3 id="_sentry_integration"><a class="anchor" href="#_sentry_integration"></a>3.1. Sentry Integration</h3>
 <div class="paragraph">
-<p>Sentry logger is initialised automatically during the application startup. There is also <code>SentryClient</code> instance available for injection if you need to access lower level API.</p>
+<p>Sentry logger is initialised automatically at application startup. Sentry&#8217;s <code>IHub</code> bean is available for injection to access the lower-level API.</p>
 </div>
 <div class="paragraph">
-<p>The Sentry event is enriched with the following information if available:</p>
+<p>Sentry events are enriched with the following information if available:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -348,7 +348,7 @@ The annotation applied to the function class itself has no effect as the functio
 <div id="footer">
 <div id="footer-text">
 Version 2.0.6-micronaut-3.0<br>
-Last updated 2022-05-24 14:28:08 UTC
+Last updated 2022-05-25 06:33:40 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
