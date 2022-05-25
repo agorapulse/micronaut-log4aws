@@ -4,7 +4,7 @@
 
 == Sentry Integration
 
-Sentry logger is initialised automatically at application startup. A `SentryClient` bean is available for injection to access the lower-level API.
+Sentry logger is initialised automatically at application startup. Sentry's `IHub` bean is available for injection to access the lower-level API.
 
 Sentry events are enriched with the following information if available:
 
