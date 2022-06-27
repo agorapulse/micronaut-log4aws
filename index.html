@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 2.0.6-micronaut-3.0</span>
+<span id="revnumber">version 2.0.7-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -102,7 +102,13 @@ $(addBlockSwitches);
 <li><a href="#_usage">3. Usage</a>
 <ul class="sectlevel2">
 <li><a href="#_sentry_integration">3.1. Sentry Integration</a></li>
-<li><a href="#_ensure_exception_being_logged_with_logerror">3.2. Ensure Exception Being Logged with @LogError</a></li>
+<li><a href="#_ensure_exception_being_logged">3.2. Ensure Exception Being Logged</a>
+<ul class="sectlevel3">
+<li><a href="#_using_logerror">3.2.1. Using @LogError</a></li>
+<li><a href="#_using_loggingfunctioninitializer">3.2.2. Using LoggingFunctionInitializer</a></li>
+<li><a href="#_using_logging_request_handlers">3.2.3. Using Logging Request Handlers</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_links">4. Links</a></li>
@@ -133,7 +139,7 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 }
 
 dependencies {
-    implementation "com.agorapulse:micronaut-log4aws:2.0.6-micronaut-3.0"
+    implementation "com.agorapulse:micronaut-log4aws:2.0.7-micronaut-3.0"
 }</code></pre>
 </div>
 </div>
@@ -282,7 +288,9 @@ The library can configure <code>Sentry</code> appender for you if you don&#8217;
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ensure_exception_being_logged_with_logerror"><a class="anchor" href="#_ensure_exception_being_logged_with_logerror"></a>3.2. Ensure Exception Being Logged with @LogError</h3>
+<h3 id="_ensure_exception_being_logged"><a class="anchor" href="#_ensure_exception_being_logged"></a>3.2. Ensure Exception Being Logged</h3>
+<div class="sect3">
+<h4 id="_using_logerror"><a class="anchor" href="#_using_logerror"></a>3.2.1. Using @LogError</h4>
 <div class="paragraph">
 <p>All the errors have to be logged to be propagated to Sentry. You can use <code>LogErrors</code> around advice
 with your entry-point method to simplify the logging boilerplate:</p>
@@ -331,6 +339,20 @@ The annotation applied to the function class itself has no effect as the functio
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_using_loggingfunctioninitializer"><a class="anchor" href="#_using_loggingfunctioninitializer"></a>3.2.2. Using LoggingFunctionInitializer</h4>
+<div class="paragraph">
+<p>You can extend <code>LoggingFunctionInitializer</code> instead of <code>FunctionInitializer</code> to ensure the problems with function initialization are logged.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_using_logging_request_handlers"><a class="anchor" href="#_using_logging_request_handlers"></a>3.2.3. Using Logging Request Handlers</h4>
+<div class="paragraph">
+<p>Yuu can extend either <code>LoggingRequestHandler</code> or <code>LoggingRequestStreamHandler</code> to ensure the error is logged from the <code>handleRequest</code> methods.
+You can use <code>LoggingFunction</code> and <code>LoggingConsumer</code> in case of using the interfaces from <code>java.util.function</code> package instead of AWS specific ones.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -347,8 +369,8 @@ The annotation applied to the function class itself has no effect as the functio
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.0.6-micronaut-3.0<br>
-Last updated 2022-05-25 06:33:40 UTC
+Version 2.0.7-micronaut-3.0<br>
+Last updated 2022-06-27 09:32:08 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
