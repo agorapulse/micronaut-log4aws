@@ -1,8 +1,24 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2022 Agorapulse.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.agorapulse.micronaut.log4aws.function;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.executor.FunctionInitializer;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 
@@ -23,32 +39,18 @@ public class LoggingFunctionInitializer extends FunctionInitializer {
 
     @Override
     protected void startThis(ApplicationContext applicationContext) {
-        try {
-            super.startThis(applicationContext);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(getClass()).error("Exception starting the application context", e);
-            throw e;
-        }
+        Logging.runAndRethrow(getClass(), "Exception starting the application context", () -> super.startThis(applicationContext));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected ApplicationContext buildApplicationContext(@Nullable Object context) {
-        try {
-            return super.buildApplicationContext(context);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(getClass()).error("Exception building the application context", e);
-            throw e;
-        }
+        return Logging.callAndRethrow(getClass(), "Exception building the application context", () -> super.buildApplicationContext(context));
     }
 
     @Override
     protected void injectThis(ApplicationContext applicationContext) {
-        try {
-            super.injectThis(applicationContext);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(getClass()).error("Exception injecting the function handler", e);
-            throw e;
-        }
+        Logging.runAndRethrow(getClass(), "Exception injecting the function handler", () -> super.injectThis(applicationContext));
     }
+
 }
