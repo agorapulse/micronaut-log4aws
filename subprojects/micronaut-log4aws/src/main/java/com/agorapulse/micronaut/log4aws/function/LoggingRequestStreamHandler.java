@@ -23,7 +23,7 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface LoggingRequestStreamHandler<I, O> extends RequestStreamHandler {
+public interface LoggingRequestStreamHandler extends RequestStreamHandler {
 
     default void handleRequest(InputStream input, OutputStream output, Context context) {
         Logging.runAndRethrow(getClass(), "Exception running handler", () -> doHandleRequest(input, output, context));
