@@ -20,8 +20,6 @@ package com.agorapulse.micronaut.log4aws.function;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.executor.FunctionInitializer;
 
-import javax.annotation.Nullable;
-
 public class LoggingFunctionInitializer extends FunctionInitializer {
 
     public LoggingFunctionInitializer() {
@@ -44,7 +42,7 @@ public class LoggingFunctionInitializer extends FunctionInitializer {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected ApplicationContext buildApplicationContext(@Nullable Object context) {
+    protected ApplicationContext buildApplicationContext(Object context) {
         return Logging.callAndRethrow(getClass(), "Exception building the application context", () -> super.buildApplicationContext(context));
     }
 
