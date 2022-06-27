@@ -61,3 +61,7 @@ class ReportsService implements RequestHandler<SQSEvent, Void> {
 ----
 
 WARNING: The annotation applied to the function class itself has no effect as the function class is executed by AWS Lambda container.
+
+== Ensure Exception Being Logged with LoggingFunctionInitializer
+
+You can extend `LoggingFunctionInitializer` instead of `FunctionInitializer` to ensure the problems with function initialization are logged.
