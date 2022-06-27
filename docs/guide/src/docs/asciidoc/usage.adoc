@@ -24,7 +24,9 @@ Sentry events are enriched with the following information if available:
 * `req.parameters`
 * `req.headers`
 
-== Ensure Exception Being Logged with @LogError
+== Ensure Exception Being Logged
+
+=== Using @LogError
 
 All the errors have to be logged to be propagated to Sentry. You can use `LogErrors` around advice
 with your entry-point method to simplify the logging boilerplate:
@@ -61,3 +63,12 @@ class ReportsService implements RequestHandler<SQSEvent, Void> {
 ----
 
 WARNING: The annotation applied to the function class itself has no effect as the function class is executed by AWS Lambda container.
+
+=== Using LoggingFunctionInitializer
+
+You can extend `LoggingFunctionInitializer` instead of `FunctionInitializer` to ensure the problems with function initialization are logged.
+
+=== Using Logging Request Handlers
+
+Yuu can extend either `LoggingRequestHandler` or `LoggingRequestStreamHandler` to ensure the error is logged from the `handleRequest` methods.
+You can use `LoggingFunction` and `LoggingConsumer` in case of using the interfaces from `java.util.function` package instead of AWS specific ones.

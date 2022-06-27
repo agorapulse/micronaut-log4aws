@@ -48,6 +48,7 @@ dependencies {
 
     implementation "io.micronaut:micronaut-core"
 
+    compileOnly 'io.micronaut:micronaut-function'
     compileOnly 'io.micronaut:micronaut-http'
     implementation 'io.micronaut:micronaut-aop'
     implementation 'io.reactivex.rxjava2:rxjava'
