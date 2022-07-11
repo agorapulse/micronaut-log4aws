@@ -70,5 +70,23 @@ You can extend `LoggingFunctionInitializer` instead of `FunctionInitializer` to 
 
 === Using Logging Request Handlers
 
-Yuu can extend either `LoggingRequestHandler` or `LoggingRequestStreamHandler` to ensure the error is logged from the `handleRequest` methods.
-You can use `LoggingFunction` and `LoggingConsumer` in case of using the interfaces from `java.util.function` package instead of AWS specific ones.
+You can use `Logging` class to ensure the errors are logged properly:
+
+[source,java]
+----
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+
+public class LoggingRequestHandler extends RequestHandler<Input, Output> {
+
+    @Override
+    public Output handleRequest(Input input, Context context) {
+        return Logging.callAndRethrow(getClass(), "Exception running handler", () -> doHandleRequest(input, context));
+    }
+
+    private Output doHandleRequest(Input input, Context context) {
+        // ...
+    }
+
+}
+----
