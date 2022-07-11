@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 2.0.7-micronaut-3.0</span>
+<span id="revnumber">version 2.0.8-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -139,7 +139,7 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 }
 
 dependencies {
-    implementation "com.agorapulse:micronaut-log4aws:2.0.7-micronaut-3.0"
+    implementation "com.agorapulse:micronaut-log4aws:2.0.8-micronaut-3.0"
 }</code></pre>
 </div>
 </div>
@@ -348,8 +348,26 @@ The annotation applied to the function class itself has no effect as the functio
 <div class="sect3">
 <h4 id="_using_logging_request_handlers"><a class="anchor" href="#_using_logging_request_handlers"></a>3.2.3. Using Logging Request Handlers</h4>
 <div class="paragraph">
-<p>Yuu can extend either <code>LoggingRequestHandler</code> or <code>LoggingRequestStreamHandler</code> to ensure the error is logged from the <code>handleRequest</code> methods.
-You can use <code>LoggingFunction</code> and <code>LoggingConsumer</code> in case of using the interfaces from <code>java.util.function</code> package instead of AWS specific ones.</p>
+<p>You can use <code>Logging</code> class to ensure the errors are logged properly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+
+public class LoggingRequestHandler extends RequestHandler&lt;Input, Output&gt; {
+
+    @Override
+    public Output handleRequest(Input input, Context context) {
+        return Logging.callAndRethrow(getClass(), "Exception running handler", () -&gt; doHandleRequest(input, context));
+    }
+
+    private Output doHandleRequest(Input input, Context context) {
+        // ...
+    }
+
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -369,8 +387,8 @@ You can use <code>LoggingFunction</code> and <code>LoggingConsumer</code> in cas
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.0.7-micronaut-3.0<br>
-Last updated 2022-06-27 09:32:08 UTC
+Version 2.0.8-micronaut-3.0<br>
+Last updated 2022-07-11 14:28:55 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
