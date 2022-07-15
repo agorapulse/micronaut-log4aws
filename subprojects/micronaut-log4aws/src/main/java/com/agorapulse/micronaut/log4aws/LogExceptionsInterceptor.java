@@ -49,7 +49,7 @@ public class LogExceptionsInterceptor implements MethodInterceptor<Object, Objec
             }
             throw th;
         } finally {
-            Sentry.flush(1000);
+            Sentry.flush(10000);
         }
     }
 }
