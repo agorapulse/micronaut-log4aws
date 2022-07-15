@@ -29,7 +29,7 @@ public class Logging {
             action.run();
         } catch (Exception e) {
             LoggerFactory.getLogger(referenceClass).error(message, e);
-            Sentry.flush(1000);
+            Sentry.flush(10000);
             throw new IllegalStateException(message, e);
         }
     }
@@ -39,7 +39,7 @@ public class Logging {
             return action.call();
         } catch (Exception e) {
             LoggerFactory.getLogger(referenceClass).error(message, e);
-            Sentry.flush(1000);
+            Sentry.flush(10000);
             throw new IllegalStateException(message, e);
         }
     }
