@@ -69,7 +69,8 @@ public class Log4AwsFactory {
                 null,
                 null,
                 null,
-                hub
+                hub,
+                null
             )
         );
     }

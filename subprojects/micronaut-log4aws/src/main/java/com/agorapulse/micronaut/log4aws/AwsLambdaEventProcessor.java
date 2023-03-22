@@ -19,13 +19,14 @@ package com.agorapulse.micronaut.log4aws;
 
 import io.micronaut.context.annotation.Context;
 import io.sentry.EventProcessor;
+import io.sentry.Hint;
 import io.sentry.SentryEvent;
 
 @Context
 public class AwsLambdaEventProcessor implements EventProcessor {
 
     @Override
-    public SentryEvent process(SentryEvent event, Object hint) {
+    public SentryEvent process(SentryEvent event, Hint hint) {
         event.setTag("aws_region", System.getenv("AWS_REGION"));
         event.setTag("aws_default_region", System.getenv("AWS_DEFAULT_REGION"));
         event.setTag("lambda_function_name", System.getenv("AWS_LAMBDA_FUNCTION_NAME"));

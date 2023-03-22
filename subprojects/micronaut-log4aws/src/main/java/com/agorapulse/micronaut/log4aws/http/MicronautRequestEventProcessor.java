@@ -19,6 +19,7 @@ package com.agorapulse.micronaut.log4aws.http;
 
 import io.micronaut.http.HttpRequest;
 import io.sentry.EventProcessor;
+import io.sentry.Hint;
 import io.sentry.SentryEvent;
 
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class MicronautRequestEventProcessor implements EventProcessor {
     }
 
     @Override
-    public SentryEvent process(SentryEvent event, Object hint) {
+    public SentryEvent process(SentryEvent event, Hint hint) {
         event.setTag("req.path", request.getPath());
         event.setTag("req.method", request.getMethod().toString());
 
