@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2022 Agorapulse.
+ * Copyright 2020-2023 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.agorapulse.micronaut.log4aws.http;
 
 import io.micronaut.http.HttpRequest;
 import io.sentry.EventProcessor;
+import io.sentry.Hint;
 import io.sentry.SentryEvent;
 
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class MicronautRequestEventProcessor implements EventProcessor {
     }
 
     @Override
-    public SentryEvent process(SentryEvent event, Object hint) {
+    public SentryEvent process(SentryEvent event, Hint hint) {
         event.setTag("req.path", request.getPath());
         event.setTag("req.method", request.getMethod().toString());
 

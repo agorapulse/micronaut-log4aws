@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2022 Agorapulse.
+ * Copyright 2020-2023 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ package com.agorapulse.micronaut.log4aws;
 
 import io.micronaut.context.annotation.Context;
 import io.sentry.EventProcessor;
+import io.sentry.Hint;
 import io.sentry.SentryEvent;
 
 @Context
 public class AwsLambdaEventProcessor implements EventProcessor {
 
     @Override
-    public SentryEvent process(SentryEvent event, Object hint) {
+    public SentryEvent process(SentryEvent event, Hint hint) {
         event.setTag("aws_region", System.getenv("AWS_REGION"));
         event.setTag("aws_default_region", System.getenv("AWS_DEFAULT_REGION"));
         event.setTag("lambda_function_name", System.getenv("AWS_LAMBDA_FUNCTION_NAME"));
