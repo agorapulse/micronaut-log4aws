@@ -22,9 +22,9 @@ import io.sentry.exception.InvalidSentryTraceHeaderException;
 import io.sentry.protocol.SentryId;
 import io.sentry.protocol.SentryTransaction;
 import io.sentry.protocol.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 public class MockHub implements IHub {
