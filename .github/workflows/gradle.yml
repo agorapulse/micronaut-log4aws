@@ -27,7 +27,7 @@ jobs:
         cache: gradle
     - uses: gradle/gradle-command-action@v2
       with:
-        arguments: ${{ matrix.versions }}
+        arguments: ${{ matrix.versions }} --scan --parallel
     - name: Show Reports
       uses: actions/upload-artifact@v1
       if: failure()

@@ -22,8 +22,6 @@ import io.sentry.exception.InvalidSentryTraceHeaderException;
 import io.sentry.protocol.SentryId;
 import io.sentry.protocol.SentryTransaction;
 import io.sentry.protocol.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -46,7 +44,7 @@ public class MockHub implements IHub {
     }
 
     @Override
-    public void captureUserFeedback(@NotNull UserFeedback userFeedback) {
+    public void captureUserFeedback(UserFeedback userFeedback) {
         System.err.printf("Got a feedback %s when scope is %s%n", userFeedback, getCurrentScope());
     }
 
@@ -66,31 +64,31 @@ public class MockHub implements IHub {
     }
 
     @Override
-    public void addBreadcrumb(@NotNull Breadcrumb breadcrumb, @Nullable Hint hint) {
+    public void addBreadcrumb(Breadcrumb breadcrumb, Hint hint) {
         System.err.printf("Got breadcrumb %s with hint %s when scope is %s%n", breadcrumb, hint, getCurrentScope());
         getCurrentScope().addBreadcrumb(breadcrumb, hint);
     }
 
     @Override
-    public void setLevel(@Nullable SentryLevel level) {
+    public void setLevel(SentryLevel level) {
         System.err.printf("New level is " + level);
         getCurrentScope().setLevel(level);
     }
 
     @Override
-    public void setTransaction(@Nullable String transaction) {
+    public void setTransaction(String transaction) {
         System.err.printf("New transaction is " + transaction);
         getCurrentScope().setTransaction(transaction);
     }
 
     @Override
-    public void setUser(@Nullable User user) {
+    public void setUser(User user) {
         System.err.printf("New user is " + user);
         getCurrentScope().setUser(user);
     }
 
     @Override
-    public void setFingerprint(@NotNull List<String> fingerprint) {
+    public void setFingerprint(List<String> fingerprint) {
         System.err.printf("New fingerprint is " + fingerprint);
         getCurrentScope().setFingerprint(fingerprint);
     }
@@ -102,31 +100,31 @@ public class MockHub implements IHub {
     }
 
     @Override
-    public void setTag(@NotNull String key, @NotNull String value) {
+    public void setTag(String key, String value) {
         System.err.printf("Setting tag with key %s and value %s when scope is %s%n", key, value, getCurrentScope());
         getCurrentScope().setTag(key, value);
     }
 
     @Override
-    public void removeTag(@NotNull String key) {
+    public void removeTag(String key) {
         System.err.printf("Removing tag with key %s when scope is %s%n", key, getCurrentScope());
         getCurrentScope().removeTag(key);
     }
 
     @Override
-    public void setExtra(@NotNull String key, @NotNull String value) {
+    public void setExtra(String key, String value) {
         System.err.printf("Setting extra with key %s and value %s when scope is %s%n", key, value, getCurrentScope());
         getCurrentScope().setExtra(key, value);
     }
 
     @Override
-    public void removeExtra(@NotNull String key) {
+    public void removeExtra(String key) {
         System.err.printf("Removing extra with key %s when scope is %s%n", key, getCurrentScope());
         getCurrentScope().removeExtra(key);
     }
 
     @Override
-    public @NotNull SentryId getLastEventId() {
+    public SentryId getLastEventId() {
         return new SentryId();
     }
 
@@ -144,20 +142,20 @@ public class MockHub implements IHub {
     }
 
     @Override
-    public void withScope(@NotNull ScopeCallback callback) {
+    public void withScope(ScopeCallback callback) {
         pushScope();
         configureScope(callback);
         popScope();
     }
 
     @Override
-    public void configureScope(@NotNull ScopeCallback callback) {
+    public void configureScope(ScopeCallback callback) {
         System.err.printf("Configuring scope %s%n", getCurrentScope());
         callback.run(getCurrentScope());
     }
 
     @Override
-    public void bindClient(@NotNull ISentryClient client) {
+    public void bindClient(ISentryClient client) {
         System.err.printf("Binding client %s when scope is %s%n", client, getCurrentScope());
     }
 
@@ -169,31 +167,31 @@ public class MockHub implements IHub {
 
     //CHECKSTYLE:OFF
     @Override
-    public @NotNull IHub clone() {
+    public IHub clone() {
         return this;
     }
 
     @Override
-    public @NotNull SentryId captureTransaction(@NotNull SentryTransaction transaction, @Nullable TraceContext traceContext, @Nullable Hint hint, @Nullable ProfilingTraceData profilingTraceData) {
+    public SentryId captureTransaction(SentryTransaction transaction, TraceContext traceContext, Hint hint, ProfilingTraceData profilingTraceData) {
         System.err.printf("Capturing transaction %s with state %s and hint %s when scope is %s%n", transaction, profilingTraceData, hint, getCurrentScope());
         return new SentryId();
     }
     //CHECKSTYLE:ON
 
     @Override
-    public @NotNull ITransaction startTransaction(@NotNull TransactionContext transactionContexts, @Nullable CustomSamplingContext customSamplingContext, boolean bindToScope) {
+    public ITransaction startTransaction(TransactionContext transactionContexts, CustomSamplingContext customSamplingContext, boolean bindToScope) {
         System.err.printf("Capturing transaction with contexts %s with sampling context %s and bind to scope %s when scope is %s%n", transactionContexts, customSamplingContext, bindToScope, getCurrentScope());
         return getCurrentScope().getTransaction();
     }
 
     @Override
-    public @NotNull ITransaction startTransaction(@NotNull TransactionContext transactionContext, @NotNull TransactionOptions transactionOptions) {
+    public ITransaction startTransaction(TransactionContext transactionContext, TransactionOptions transactionOptions) {
         //System.err.printf("Capturing transaction with contexts %s with sampling context %s and bind to scope %s and start timestamp %s when scope is %s%n", transactionContext, transactionOptions, getCurrentScope());
         return getCurrentScope().getTransaction();
     }
 
     @Override
-    public @Nullable SentryTraceHeader traceHeaders() {
+    public SentryTraceHeader traceHeaders() {
         try {
             return new SentryTraceHeader("traceid-spanid");
         } catch (InvalidSentryTraceHeaderException e) {
@@ -202,22 +200,22 @@ public class MockHub implements IHub {
     }
 
     @Override
-    public void setSpanContext(@NotNull Throwable throwable, @NotNull ISpan span, @NotNull String transactionName) {
+    public void setSpanContext(Throwable throwable, ISpan span, String transactionName) {
         System.err.printf("Setting span context %s to span %s with transaction name %s when scope is %s%n", throwable, span, transactionName, getCurrentScope());
     }
 
     @Override
-    public @Nullable ISpan getSpan() {
+    public ISpan getSpan() {
         return NoOpSpan.getInstance();
     }
 
     @Override
-    public @NotNull SentryOptions getOptions() {
+    public SentryOptions getOptions() {
         return new SentryOptions();
     }
 
     @Override
-    public @Nullable Boolean isCrashedLastRun() {
+    public Boolean isCrashedLastRun() {
         return false;
     }
 
@@ -234,41 +232,41 @@ public class MockHub implements IHub {
     }
 
     @Override
-    public @NotNull SentryId captureEvent(@NotNull SentryEvent event, @Nullable Hint hint) {
+    public SentryId captureEvent(SentryEvent event, Hint hint) {
         System.err.printf("Got an event %s with hint %s when scope is %s%n", event, hint, getCurrentScope());
         return new SentryId();
     }
 
     @Override
-    public @NotNull SentryId captureEvent(@NotNull SentryEvent event, @Nullable Hint hint, @NotNull ScopeCallback callback) {
+    public SentryId captureEvent(SentryEvent event, Hint hint, ScopeCallback callback) {
         return null;
     }
 
     @Override
-    public @NotNull SentryId captureMessage(@NotNull String message, @NotNull SentryLevel level) {
+    public SentryId captureMessage(String message, SentryLevel level) {
         System.err.printf("Got a message %s with level %s when scope is %s%n", message, level, getCurrentScope());
         return new SentryId();
     }
 
     @Override
-    public @NotNull SentryId captureMessage(@NotNull String message, @NotNull SentryLevel level, @NotNull ScopeCallback callback) {
+    public SentryId captureMessage(String message, SentryLevel level, ScopeCallback callback) {
         return null;
     }
 
     @Override
-    public @NotNull SentryId captureEnvelope(@NotNull SentryEnvelope envelope, @Nullable Hint hint) {
+    public SentryId captureEnvelope(SentryEnvelope envelope, Hint hint) {
         System.err.printf("Got an envelope %s with hint %s when scope is %s%n", envelope, hint, getCurrentScope());
         return new SentryId();
     }
 
     @Override
-    public @NotNull SentryId captureException(@NotNull Throwable throwable, @Nullable Hint hint) {
+    public SentryId captureException(Throwable throwable, Hint hint) {
         System.err.printf("Got an envelope %s with hint %s when scope is %s%n", throwable, hint, getCurrentScope());
         return new SentryId();
     }
 
     @Override
-    public @NotNull SentryId captureException(@NotNull Throwable throwable, @Nullable Hint hint, @NotNull ScopeCallback callback) {
+    public SentryId captureException(Throwable throwable, Hint hint, ScopeCallback callback) {
         return null;
     }
 
