@@ -38,28 +38,19 @@ buildscript {
     }
     dependencies {
         classpath group: "org.kordamp.gradle", name: "settings-gradle-plugin", version: kordampPluginVersion
-        // forces the version suitable for all currently used plugins
-        classpath 'org.eclipse.jgit:org.eclipse.jgit:5.6.0.201912101111-r', {
-            force = true
-        }
-        classpath 'org.ajoberstar.grgit:grgit-core:4.0.1'
-        classpath 'jp.classmethod.aws:gradle-aws-plugin:0.41'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+        classpath group: 'io.micronaut.gradle', name: 'micronaut-minimal-plugin', version: micronautGradlePluginVersion
     }
 }
 
 plugins {
-    id 'com.gradle.enterprise' version '3.6.1'
+    id 'com.gradle.enterprise' version '3.15.1'
 }
 
 gradleEnterprise {
     buildScan {
+        publishAlways()
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
         termsOfServiceAgree = "yes"
-
-        buildScanPublished { scan ->
-            file("scan-journal.log") << "${new Date()} - ${scan.buildScanId} - ${scan.buildScanUri}\n"
-        }
     }
 }
 

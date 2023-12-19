@@ -20,17 +20,10 @@ plugins {
 }
 
 dependencies {
-    compile project(':micronaut-log4aws')
-    testCompile project(':micronaut-log4aws-test')
+    implementation project(':micronaut-log4aws')
+    testImplementation project(':micronaut-log4aws-test')
 
-    annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    compile platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testCompile platform("io.micronaut:micronaut-bom:$micronautVersion")
-
-    annotationProcessor "io.micronaut:micronaut-inject-java"
-    compile "io.micronaut:micronaut-core"
-    compileOnly "io.micronaut:micronaut-inject-groovy"
-    testCompile "io.micronaut:micronaut-inject-groovy"
+    compileOnly 'io.micronaut:micronaut-inject-groovy'
+    testImplementation 'io.micronaut:micronaut-inject-groovy'
 }
 

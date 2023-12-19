@@ -26,48 +26,28 @@ config {
 }
 
 dependencies {
-    // rewrite("org.openrewrite.recipe:rewrite-micronaut:1.3.0")
-
-    annotationProcessor enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
-    api enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
-    testAnnotationProcessor enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
-    testImplementation enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
-
-    annotationProcessor enforcedPlatform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
-    api enforcedPlatform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
-    testAnnotationProcessor enforcedPlatform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
-    testImplementation enforcedPlatform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
-
-    annotationProcessor "io.micronaut:micronaut-inject-java"
+    annotationProcessor platform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
+    api platform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
+    testAnnotationProcessor platform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
+    testImplementation platform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
 
     api "io.sentry:sentry-log4j2:$sentryVersion"
-    api group: 'com.amazonaws', name: 'aws-lambda-java-log4j2', version: awsLog4jVersion
-    api "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    api "com.amazonaws:aws-lambda-java-log4j2:$awsLog4jVersion"
+    api "org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion"
     api "org.apache.logging.log4j:log4j-api:$log4jVersion"
     api "org.apache.logging.log4j:log4j-core:$log4jVersion"
-
-    implementation "io.micronaut:micronaut-core"
 
     compileOnly 'io.micronaut:micronaut-function'
     compileOnly 'io.micronaut:micronaut-http'
     implementation 'io.micronaut:micronaut-aop'
     implementation 'io.reactivex.rxjava2:rxjava'
-    implementation 'javax.inject:javax.inject:1'
 
-    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
-
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut:micronaut-validation"
-    testImplementation "io.micronaut:micronaut-http-server-netty"
+    testImplementation 'io.micronaut.validation:micronaut-validation'
+    testImplementation 'io.micronaut:micronaut-http-server-netty'
 
     testImplementation "com.github.stefanbirkner:system-lambda:$systemLambdaVersion"
+    testImplementation "com.agorapulse:gru-micronaut:$gruVersion"
 
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-
-    testImplementation "com.agorapulse:gru-http:$gruVersion"
-    testImplementation "net.bytebuddy:byte-buddy:$bytebuddyVersion"
-    testImplementation "org.objenesis:objenesis:$objenesisVersion"
+    testImplementation 'io.micronaut:micronaut-jackson-databind'
 }
 
