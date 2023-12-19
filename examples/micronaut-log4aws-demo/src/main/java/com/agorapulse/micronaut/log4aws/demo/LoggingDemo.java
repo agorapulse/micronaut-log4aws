@@ -20,7 +20,7 @@ package com.agorapulse.micronaut.log4aws.demo;
 import io.micronaut.function.FunctionBean;
 import io.micronaut.function.executor.FunctionInitializer;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.function.Function;
 

@@ -26,7 +26,7 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.validation.Validated
 
-import javax.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotBlank
 
 @Validated
 @CompileStatic

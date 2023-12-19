@@ -20,10 +20,13 @@ package com.agorapulse.micronaut.log4aws
 import io.micronaut.context.ApplicationContext
 import spock.lang.AutoCleanup
 import spock.lang.Specification
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.*
 
+/**
+ * Tests the log error interceptor.
+ */
 class LogErrorInterceptorSpec extends Specification {
 
     private static final String LOGGED_EVENT = 'ERROR ThrowsIllegalArgumentTester:45 - Exception executing method'

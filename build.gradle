@@ -94,6 +94,14 @@ config {
     }
 
     docs {
+        javadoc {
+            autoLinks {
+                enabled = false
+            }
+            aggregate {
+                enabled = false
+            }
+        }
         groovydoc {
             enabled = false
             aggregate {
@@ -131,16 +139,20 @@ subprojects { subproject ->
     if (subproject.name == 'guide') return
 
     apply plugin: 'groovy'
+    apply plugin: 'io.micronaut.minimal.library'
 
-    dependencies {
-        compile platform("org.spockframework:spock-bom:$spockVersion")
-        testCompile platform("org.spockframework:spock-bom:$spockVersion")
-        // add your global dependencies
-        testCompile("org.spockframework:spock-core") {
-            exclude group: "org.codehaus.groovy", module: "groovy-all"
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
         }
-        testCompile "net.bytebuddy:byte-buddy:$bytebuddyVersion"
-        testCompile "org.objenesis:objenesis:$objenesisVersion"
+    }
+
+    micronaut {
+        importMicronautPlatform = true
+        testRuntime 'spock'
+        processing {
+            incremental false
+        }
     }
 
     // useful for Micronaut
