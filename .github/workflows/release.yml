@@ -40,8 +40,7 @@ jobs:
     strategy:
       matrix:
         repository:
-          # Until everything is migrated to Micronaut 4.x
-          # - agorapulse/agorapulse-bom
+          - agorapulse/agorapulse-bom
           - agorapulse/agorapulse-oss
     steps:
       - uses: actions/checkout@v1
@@ -54,4 +53,4 @@ jobs:
           token: ${{ secrets.GITHUB_PERSONAL_TOKEN }}
           repository: ${{ matrix.repository }}
           event-type: ap-new-version-released-event
-          client-payload: '{ "group": "com.agorapulse", "module": "micronaut-log4aws", "version": "${{ steps.version.outputs.tag }}", "property" : "micronaut.log4aws.version", "github" : ${{ toJson(github) }} }'
+          client-payload: '{ "group": "com.agorapulse", "module": "micronaut-log4aws", "micronautCompatibility": [4], "version": "${{ steps.version.outputs.tag }}", "property" : "micronaut.log4aws.version", "github" : ${{ toJson(github) }} }'
