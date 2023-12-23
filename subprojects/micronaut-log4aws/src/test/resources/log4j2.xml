@@ -32,7 +32,7 @@
         <Root level="info">
             <AppenderRef ref="Lambda"/>
             <!-- Note that the Sentry logging threshold is overridden to the WARN level -->
-            <AppenderRef ref="Sentry" level="warn"/>
+            <AppenderRef ref="Sentry" level="error"/>
         </Root>
         <Logger name="io.sentry" level="warn" additivity="false">
             <AppenderRef ref="Console" />
