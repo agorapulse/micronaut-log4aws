@@ -23,10 +23,10 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
-import io.reactivex.Flowable;
 import io.sentry.Breadcrumb;
 import io.sentry.IHub;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
 @Filter("/**")
 public class SentryFilter implements HttpServerFilter {
@@ -44,7 +44,7 @@ public class SentryFilter implements HttpServerFilter {
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        return Flowable
+        return Flux
             .just(request)
             .switchMap(r -> {
                 hub.pushScope();

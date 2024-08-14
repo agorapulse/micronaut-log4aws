@@ -40,7 +40,7 @@ dependencies {
     compileOnly 'io.micronaut:micronaut-function'
     compileOnly 'io.micronaut:micronaut-http'
     implementation 'io.micronaut:micronaut-aop'
-    implementation 'io.reactivex.rxjava2:rxjava'
+    implementation 'io.micronaut.reactor:micronaut-reactor'
 
     testImplementation 'io.micronaut.validation:micronaut-validation'
     testImplementation 'io.micronaut:micronaut-http-server-netty'
