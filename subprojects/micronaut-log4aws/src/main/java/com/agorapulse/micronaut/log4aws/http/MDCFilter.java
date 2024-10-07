@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2023 Agorapulse.
+ * Copyright 2020-2024 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,14 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -50,13 +54,13 @@ public class MDCFilter implements HttpServerFilter {
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
         Map<String, String> tags = getTags(request);
-        return Flowable
+        return Flux
             .just(request)
             .switchMap(r -> {
                 TagHelper.setTags(tags);
                 return chain.proceed(request);
             })
-            .doFinally(() -> TagHelper.clearTags(tags));
+            .doFinally(signal -> TagHelper.clearTags(tags));
     }
 
     public Map<String, String> getTags(HttpRequest<?> request) {

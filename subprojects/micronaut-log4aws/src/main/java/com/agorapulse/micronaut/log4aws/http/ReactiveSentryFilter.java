@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2023 Agorapulse.
+ * Copyright 2020-2024 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
-import io.reactivex.Flowable;
 import io.sentry.Breadcrumb;
 import io.sentry.IHub;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
 @Filter("/**")
 @Requires(property = "sentry.filter.type", value = "reactive")
@@ -48,7 +48,7 @@ public class ReactiveSentryFilter implements HttpServerFilter {
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        return Flowable
+        return Flux
             .just(request)
             .doOnNext(r -> {
                 hub.pushScope();
@@ -58,7 +58,7 @@ public class ReactiveSentryFilter implements HttpServerFilter {
                 });
             })
             .switchMap(r -> chain.proceed(request))
-            .doFinally(hub::popScope);
+            .doFinally(signal -> hub.popScope());
     }
 
 }
