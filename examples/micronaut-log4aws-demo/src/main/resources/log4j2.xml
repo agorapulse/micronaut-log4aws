@@ -3,7 +3,7 @@
 
     SPDX-License-Identifier: Apache-2.0
 
-    Copyright 2020-2024 Agorapulse.
+    Copyright 2020-2025 Agorapulse.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@
         <Root level="info">
             <AppenderRef ref="Lambda"/>
             <!-- Note that the Sentry logging threshold is overridden to the WARN level -->
-            <AppenderRef ref="Sentry" level="warn"/>
+            <AppenderRef ref="Sentry" level="error"/>
         </Root>
         <Logger name="io.sentry" level="trace" additivity="false">
             <AppenderRef ref="Console" />
