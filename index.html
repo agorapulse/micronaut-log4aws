@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 4.0.1</span>
+<span id="revnumber">version 4.0.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -139,7 +139,7 @@ into <a href="https://sentry.io/">Sentry</a> service.</p>
 }
 
 dependencies {
-    implementation "com.agorapulse:micronaut-log4aws:4.0.1"
+    implementation "com.agorapulse:micronaut-log4aws:4.0.2"
 }</code></pre>
 </div>
 </div>
@@ -190,7 +190,7 @@ and replace it with a new file <code>log4j2.xml</code> with following content. F
         &lt;Root level="info"&gt;
             &lt;AppenderRef ref="Lambda"/&gt;
             &lt;!-- Note that the Sentry logging threshold is overridden to the WARN level --&gt;
-            &lt;AppenderRef ref="Sentry" level="warn"/&gt;
+            &lt;AppenderRef ref="Sentry" level="error"/&gt;
         &lt;/Root&gt;
         &lt;Logger name="io.sentry" level="warn" additivity="false"&gt;
             &lt;AppenderRef ref="Console" /&gt;
@@ -387,8 +387,8 @@ public class LoggingRequestHandler extends RequestHandler&lt;Input, Output&gt; {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 4.0.1<br>
-Last updated 2024-10-07 14:41:58 UTC
+Version 4.0.2<br>
+Last updated 2025-03-05 11:56:22 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
