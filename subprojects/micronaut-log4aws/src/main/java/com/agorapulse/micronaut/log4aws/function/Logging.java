@@ -29,8 +29,9 @@ public class Logging {
             action.run();
         } catch (Exception e) {
             LoggerFactory.getLogger(referenceClass).error(message, e);
-            Sentry.flush(10000);
             throw new IllegalStateException(message, e);
+        } finally {
+            Sentry.flush(10000);
         }
     }
 
@@ -39,8 +40,9 @@ public class Logging {
             return action.call();
         } catch (Exception e) {
             LoggerFactory.getLogger(referenceClass).error(message, e);
-            Sentry.flush(10000);
             throw new IllegalStateException(message, e);
+        } finally {
+            Sentry.flush(10000);
         }
     }
 
