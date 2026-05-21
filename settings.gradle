@@ -22,31 +22,41 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id 'com.agorapulse.gradle.micronaut-library'        version "${agorapulseGradlePluginsVersion}"
+        id 'com.agorapulse.gradle.micronaut-library'           version "${agorapulseGradlePluginsVersion}"
         id 'com.agorapulse.gradle.groovy-common-configuration' version "${agorapulseGradlePluginsVersion}"
-        id 'com.agorapulse.gradle.micronaut-compatibility'  version "${agorapulseGradlePluginsVersion}"
-        id 'com.agorapulse.gradle.guide'                    version "${agorapulseGradlePluginsVersion}"
-        id 'org.ajoberstar.git-publish'                     version "${gitPublishPluginVersion}"
+        id 'com.agorapulse.gradle.micronaut-compatibility'     version "${agorapulseGradlePluginsVersion}"
+        id 'com.agorapulse.gradle.guide'                       version "${agorapulseGradlePluginsVersion}"
     }
 }
 
 buildscript {
     repositories {
         gradlePluginPortal()
+        maven { url 'https://agorapulse.jfrog.io/agorapulse/gradle-plugins-releases-local/' }
     }
     dependencies {
-        classpath group: 'io.micronaut.gradle', name: 'micronaut-minimal-plugin', version: micronautGradlePluginVersion
+        classpath group: 'io.micronaut.gradle',  name: 'micronaut-minimal-plugin',       version: micronautGradlePluginVersion
+        classpath group: 'com.agorapulse.gradle', name: 'micronaut-library',             version: agorapulseGradlePluginsVersion
+        classpath group: 'com.agorapulse.gradle', name: 'groovy-common-configuration',   version: agorapulseGradlePluginsVersion
     }
 }
 
 plugins {
-    id 'com.agorapulse.gradle.settings'                     version "${agorapulseGradlePluginsVersion}"
-    id 'com.agorapulse.gradle.gradle-enterprise'            version "${agorapulseGradlePluginsVersion}"
-    id 'com.agorapulse.gradle.remote-cache'                 version "${agorapulseGradlePluginsVersion}"
+    id 'com.agorapulse.gradle.settings'                        version "${agorapulseGradlePluginsVersion}"
+    id 'com.agorapulse.gradle.gradle-enterprise'               version "${agorapulseGradlePluginsVersion}"
+    id 'com.agorapulse.gradle.remote-cache'                    version "${agorapulseGradlePluginsVersion}"
 }
 
 gradleProjects {
     directories = ['subprojects', 'docs', 'examples', 'testprojects']
+
+    plugins {
+        dirs(['subprojects', 'testprojects', 'examples']) {
+            id 'groovy'
+            id 'com.agorapulse.gradle.micronaut-library'
+            id 'com.agorapulse.gradle.groovy-common-configuration'
+        }
+    }
 }
 
 rootProject.name = 'micronaut-log4aws-root'

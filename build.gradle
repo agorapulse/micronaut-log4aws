@@ -17,14 +17,9 @@
  */
 plugins {
     id 'lifecycle-base'
-    id 'io.github.gradle-nexus.publish-plugin'              version "${nexusPluginVersion}"
-    id 'com.agorapulse.gradle.aggregate-test-reports'       version "${agorapulseAggregateReportsVersion}"
-    id 'com.agorapulse.gradle.aggregate-checkstyle-reports' version "${agorapulseAggregateReportsVersion}"
-    id 'com.agorapulse.gradle.aggregate-codenarc-reports'   version "${agorapulseAggregateReportsVersion}"
-}
-
-tasks.named('aggregateCodenarc') {
-    codenarcClasspath = files()
+    id 'io.github.gradle-nexus.publish-plugin'            version "${nexusPluginVersion}"
+    id 'com.agorapulse.gradle.aggregate-test-reports'     version "${agorapulseAggregateReportsVersion}"
+    id 'com.agorapulse.gradle.aggregate-jacoco-reports'   version "${agorapulseGradlePluginsVersion}"
 }
 
 if (!project.hasProperty('ossrhUsername'))      ext.ossrhUsername       = System.getenv('SONATYPE_USERNAME') ?: '**UNDEFINED**'
@@ -48,6 +43,17 @@ allprojects {
     }
 }
 
+subprojects {
+    plugins.withId('com.agorapulse.gradle.micronaut-library') {
+        micronaut {
+            importMicronautPlatform = true
+            processing {
+                incremental false
+            }
+        }
+    }
+}
+
 tasks.named('check') {
-    dependsOn 'aggregateCheckstyle', 'aggregateCodenarc', 'aggregateTestReports'
+    dependsOn 'aggregateTestReports', 'aggregateJacocoReports'
 }

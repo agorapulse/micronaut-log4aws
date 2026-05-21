@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 plugins {
-    id 'groovy'
     id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id 'com.agorapulse.gradle.micronaut-library'
-    id 'com.agorapulse.gradle.groovy-common-configuration'
     id 'com.agorapulse.gradle.micronaut-compatibility'
-}
-
-micronaut {
-    importMicronautPlatform = true
-    testRuntime 'spock'
-    processing {
-        incremental false
-    }
 }
 
 dependencies {
@@ -106,8 +95,6 @@ signing {
     def signingSecretKeyPath = System.getenv('SIGNING_SECRET_KEY_PATH')
     def signingSecretKey = signingSecretKeyPath ? rootProject.file(signingSecretKeyPath).text : project.findProperty('signingSecretKey')
 
-    if (signingKeyId && signingPassword && signingSecretKey) {
-        useInMemoryPgpKeys(signingKeyId, signingSecretKey, signingPassword)
-        sign publishing.publications.maven
-    }
+    useInMemoryPgpKeys(signingKeyId, signingSecretKey, signingPassword)
+    sign publishing.publications.maven
 }
