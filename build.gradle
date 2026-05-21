@@ -16,101 +16,19 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.groovy-project'
-    id 'org.kordamp.gradle.checkstyle'
-    id 'org.kordamp.gradle.codenarc'
-    id 'org.kordamp.gradle.coveralls'
-    id 'io.github.gradle-nexus.publish-plugin'
+    id 'lifecycle-base'
+    id 'io.github.gradle-nexus.publish-plugin'              version "${nexusPluginVersion}"
+    id 'com.agorapulse.gradle.aggregate-test-reports'       version "${agorapulseAggregateReportsVersion}"
+    id 'com.agorapulse.gradle.aggregate-checkstyle-reports' version "${agorapulseAggregateReportsVersion}"
+    id 'com.agorapulse.gradle.aggregate-codenarc-reports'   version "${agorapulseAggregateReportsVersion}"
+}
+
+tasks.named('aggregateCodenarc') {
+    codenarcClasspath = files()
 }
 
 if (!project.hasProperty('ossrhUsername'))      ext.ossrhUsername       = System.getenv('SONATYPE_USERNAME') ?: '**UNDEFINED**'
 if (!project.hasProperty('ossrhPassword'))      ext.ossrhPassword       = System.getenv('SONATYPE_PASSWORD') ?: '**UNDEFINED**'
-if (!project.hasProperty('signingKeyId'))       ext.signingKeyId        = System.getenv('SIGNING_KEY_ID') ?: '**UNDEFINED**'
-if (!project.hasProperty('signingPassword'))    ext.signingPassword     = System.getenv('SIGNING_PASSWORD') ?: '**UNDEFINED**'
-if (!project.hasProperty('signingSecretKey'))   ext.signingSecretKey    = System.getenv('SIGNING_SECRET_KEY_PATH') ? rootProject.file(System.getenv('SIGNING_SECRET_KEY_PATH')).text : '**UNDEFINED**'
-
-config {
-    release = (rootProject.findProperty('release') ?: false).toBoolean()
-
-    info {
-        name        = 'Micronaut Log4AWS'
-        vendor      = 'Agorapulse'
-        description = 'Micronaut Log4AWS helps to simplify logging for Micronaut Functions running on AWS Lambda'
-
-        links {
-            website      = "https://github.com/" + slug
-            issueTracker = "https://github.com/" + slug + "/issues"
-            scm          = "https://github.com/" + slug + ".git"
-        }
-
-        people {
-            person {
-                id    = 'musketyr'
-                name  = 'Vladimir Orany'
-                roles = ['developer']
-            }
-        }
-
-        repositories {
-            repository {
-                name = 'localRelease'
-                url  = "" + project.rootProject.buildDir + "/repos/local/release"
-            }
-            repository {
-                name = 'localSnapshot'
-                url  = "" + project.rootProject.buildDir + "/repos/local/snapshot"
-            }
-        }
-    }
-
-    licensing {
-        licenses {
-            license {
-                id = 'Apache-2.0'
-            }
-        }
-    }
-
-    publishing {
-        enabled = false
-        signing {
-            enabled =  true
-            keyId = signingKeyId
-            secretKey = signingSecretKey
-            password = signingPassword
-        }
-        releasesRepository  = 'localRelease'
-        snapshotsRepository = 'localSnapshot'
-    }
-
-    quality {
-        checkstyle {
-            toolVersion = '8.27'
-        }
-
-        codenarc {
-            toolVersion = '1.5'
-        }
-    }
-
-    docs {
-        javadoc {
-            autoLinks {
-                enabled = false
-            }
-            aggregate {
-                enabled = false
-            }
-        }
-        groovydoc {
-            enabled = false
-            aggregate {
-                enabled = false
-            }
-        }
-    }
-
-}
 
 nexusPublishing {
     repositories {
@@ -126,59 +44,10 @@ nexusPublishing {
 allprojects {
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/release"  }
-    }
-
-    license {
-        exclude '**/*.json'
-        exclude '***.yml'
+        maven { url 'https://repo.spring.io/release' }
     }
 }
 
-subprojects { subproject ->
-    if (subproject.name == 'guide') return
-
-    apply plugin: 'groovy'
-    apply plugin: 'io.micronaut.minimal.library'
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(25)
-        }
-    }
-
-    micronaut {
-        importMicronautPlatform = true
-        testRuntime 'spock'
-        processing {
-            incremental false
-        }
-    }
-
-    // useful for Micronaut
-    tasks.withType(GroovyCompile) {
-        groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')
-    }
-
-    // useful for Micronaut
-    tasks.withType(JavaCompile){
-        options.encoding = "UTF-8"
-        options.compilerArgs.add('-parameters')
-    }
-
-    // location independent tests (useful for stable CI builds)
-    tasks.withType(Test){
-        useJUnitPlatform()
-        systemProperty 'user.timezone', 'UTC'
-        systemProperty 'user.language', 'en'
-    }
-
-    // useful for IntelliJ
-    task cleanOut(type: Delete) {
-        delete file('out')
-    }
-
-    clean.dependsOn cleanOut
+tasks.named('check') {
+    dependsOn 'aggregateCheckstyle', 'aggregateCodenarc', 'aggregateTestReports'
 }
-
-check.dependsOn('aggregateCheckstyle', 'aggregateCodenarc', 'aggregateAllTestReports', 'coveralls')

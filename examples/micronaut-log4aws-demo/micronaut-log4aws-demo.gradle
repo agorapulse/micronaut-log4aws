@@ -17,15 +17,24 @@
  */
 plugins {
     id 'groovy'
+    id 'com.agorapulse.gradle.micronaut-library'
+    id 'com.agorapulse.gradle.groovy-common-configuration'
+}
+
+micronaut {
+    importMicronautPlatform = true
+    testRuntime 'spock'
+    processing {
+        incremental false
+    }
 }
 
 dependencies {
     implementation project(':micronaut-log4aws')
 
-    implementation "io.micronaut:micronaut-function"
+    implementation 'io.micronaut:micronaut-function'
 
-    compileOnly "io.micronaut:micronaut-inject-groovy"
+    compileOnly 'io.micronaut:micronaut-inject-groovy'
 
     testImplementation "com.github.stefanbirkner:system-lambda:$systemLambdaVersion"
 }
-

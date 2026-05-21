@@ -25,31 +25,10 @@ buildscript {
 }
 
 plugins {
-    id 'org.kordamp.gradle.guide'
-    id 'org.ajoberstar.git-publish'
-}
-
-config {
-    docs {
-        guide {
-            publish {
-                enabled = true
-            }
-        }
-    }
-}
-
-configurations {
-    asciidoctorExtensions
-}
-
-dependencies {
-    asciidoctorExtensions 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.3'
+    id 'com.agorapulse.gradle.guide'
 }
 
 asciidoctor {
-    configurations 'asciidoctorExtensions'
-
     baseDirFollowsSourceDir()
 
     attributes = [
@@ -58,5 +37,4 @@ asciidoctor {
         'root-dir': rootDir,
         'project-slug': slug
     ]
-
 }

@@ -17,6 +17,16 @@
  */
 plugins {
     id 'groovy'
+    id 'com.agorapulse.gradle.micronaut-library'
+    id 'com.agorapulse.gradle.groovy-common-configuration'
+}
+
+micronaut {
+    importMicronautPlatform = true
+    testRuntime 'spock'
+    processing {
+        incremental false
+    }
 }
 
 dependencies {
@@ -26,4 +36,3 @@ dependencies {
     compileOnly 'io.micronaut:micronaut-inject-groovy'
     testImplementation 'io.micronaut:micronaut-inject-groovy'
 }
-

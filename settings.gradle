@@ -17,18 +17,16 @@
  */
 pluginManagement {
     repositories {
-        mavenCentral()
         gradlePluginPortal()
+        maven { url 'https://agorapulse.jfrog.io/agorapulse/gradle-plugins-releases-local/' }
+        mavenCentral()
     }
     plugins {
-        id 'org.kordamp.gradle.groovy-project'          version kordampPluginVersion
-        id 'org.kordamp.gradle.checkstyle'              version kordampPluginVersion
-        id 'org.kordamp.gradle.codenarc'                version kordampPluginVersion
-        id 'org.kordamp.gradle.guide'                   version kordampPluginVersion
-        id 'org.kordamp.gradle.coveralls'               version kordampPluginVersion
-        id 'com.github.kt3k.coveralls'                  version coverallsPluginVersion
-        id 'org.ajoberstar.git-publish'                 version gitPublishPluginVersion
-        id 'io.github.gradle-nexus.publish-plugin'      version nexusPluginVersion
+        id 'com.agorapulse.gradle.micronaut-library'        version "${agorapulseGradlePluginsVersion}"
+        id 'com.agorapulse.gradle.groovy-common-configuration' version "${agorapulseGradlePluginsVersion}"
+        id 'com.agorapulse.gradle.micronaut-compatibility'  version "${agorapulseGradlePluginsVersion}"
+        id 'com.agorapulse.gradle.guide'                    version "${agorapulseGradlePluginsVersion}"
+        id 'org.ajoberstar.git-publish'                     version "${gitPublishPluginVersion}"
     }
 }
 
@@ -42,26 +40,13 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.develocity' version '4.0.2'
+    id 'com.agorapulse.gradle.settings'                     version "${agorapulseGradlePluginsVersion}"
+    id 'com.agorapulse.gradle.gradle-enterprise'            version "${agorapulseGradlePluginsVersion}"
+    id 'com.agorapulse.gradle.remote-cache'                 version "${agorapulseGradlePluginsVersion}"
 }
 
-develocity {
-    buildScan {
-        publishing.onlyIf { true }
-        termsOfUseUrl = 'https://gradle.com/terms-of-service'
-        termsOfUseAgree = 'yes'
-    }
+gradleProjects {
+    directories = ['subprojects', 'docs', 'examples', 'testprojects']
 }
 
 rootProject.name = 'micronaut-log4aws-root'
-
-['subprojects', 'docs', 'examples', 'testprojects'].each { dir ->
-    file(dir).eachDir { sub ->
-        include sub.name
-        project(":${sub.name}").projectDir = sub
-        def explicitBuildFile = new File(sub, "${sub.name}.gradle")
-        if (explicitBuildFile.exists()) {
-            project(":${sub.name}").buildFileName = "${sub.name}.gradle"
-        }
-    }
-}
