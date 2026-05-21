@@ -37,27 +37,31 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath group: "org.kordamp.gradle", name: "settings-gradle-plugin", version: kordampPluginVersion
         classpath group: 'io.micronaut.gradle', name: 'micronaut-minimal-plugin', version: micronautGradlePluginVersion
     }
 }
 
 plugins {
-    id 'com.gradle.enterprise' version '3.15.1'
+    id 'com.gradle.develocity' version '4.0.2'
 }
 
-gradleEnterprise {
+develocity {
     buildScan {
-        publishAlways()
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
+        publishing.onlyIf { true }
+        termsOfUseUrl = 'https://gradle.com/terms-of-service'
+        termsOfUseAgree = 'yes'
     }
 }
 
-apply plugin: 'org.kordamp.gradle.settings'
-
-projects {
-    directories = ['subprojects', 'docs',  'examples', 'testprojects']
-}
-
 rootProject.name = 'micronaut-log4aws-root'
+
+['subprojects', 'docs', 'examples', 'testprojects'].each { dir ->
+    file(dir).eachDir { sub ->
+        include sub.name
+        project(":${sub.name}").projectDir = sub
+        def explicitBuildFile = new File(sub, "${sub.name}.gradle")
+        if (explicitBuildFile.exists()) {
+            project(":${sub.name}").buildFileName = "${sub.name}.gradle"
+        }
+    }
+}
