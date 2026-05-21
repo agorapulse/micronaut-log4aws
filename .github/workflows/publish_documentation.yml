@@ -18,7 +18,10 @@ jobs:
         with:
           owner: agorapulse
           repo: micronaut-log4aws
+      - uses: gradle/actions/setup-gradle@v5
       - name: Publish GitHub Pages
-        uses: gradle/gradle-command-action@v2
-        with:
-          arguments: gitPublishPush -Pversion=${{ steps.latest_version.outputs.latest_tag }} -Prelease=true -Dorg.ajoberstar.grgit.auth.username=${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}
+        run: |
+          ./gradlew :docs:guide:gitPublishPush \
+            -Pversion=${{ steps.latest_version.outputs.latest_tag }} \
+            -Prelease=true \
+            -Dorg.ajoberstar.grgit.auth.username=${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}

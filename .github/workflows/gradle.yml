@@ -11,6 +11,5 @@ jobs:
       with:
         distribution: zulu
         java-version: 25
-    - uses: gradle/gradle-command-action@v2
-      with:
-        arguments: check
+    - uses: gradle/actions/setup-gradle@v5
+    - run: ./gradlew check
