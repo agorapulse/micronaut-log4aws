@@ -19,12 +19,6 @@ plugins {
     id 'java-library'
 }
 
-config {
-    publishing {
-        enabled = true
-    }
-}
-
 dependencies {
     annotationProcessor platform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
     api platform("org.apache.logging.log4j:log4j-bom:$log4jVersion")
@@ -50,4 +44,3 @@ dependencies {
 
     testImplementation 'io.micronaut:micronaut-jackson-databind'
 }
-

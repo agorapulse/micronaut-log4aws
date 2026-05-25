@@ -15,15 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'groovy'
-}
-
 dependencies {
     implementation project(':micronaut-log4aws')
     testImplementation project(':micronaut-log4aws-test')
 
-    compileOnly "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut:micronaut-inject-groovy"
+    compileOnly 'io.micronaut:micronaut-inject-groovy'
+    testImplementation 'io.micronaut:micronaut-inject-groovy'
 }
-

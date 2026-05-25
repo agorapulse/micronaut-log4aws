@@ -15,10 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'groovy'
-}
-
 dependencies {
     api 'org.spockframework:spock-core'
     implementation project(':micronaut-log4aws')
@@ -28,4 +24,3 @@ dependencies {
     testImplementation 'io.micronaut:micronaut-inject-groovy'
     testImplementation "com.github.stefanbirkner:system-lambda:$systemLambdaVersion"
 }
-
