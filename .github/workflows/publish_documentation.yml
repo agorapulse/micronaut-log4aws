@@ -21,7 +21,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - name: Publish GitHub Pages
         run: |
-          ./gradlew :docs:guide:gitPublishPush \
+          ./gradlew :guide:gitPublishPush \
             -Pversion=${{ steps.latest_version.outputs.latest_tag }} \
             -Prelease=true \
             -Dorg.ajoberstar.grgit.auth.username=${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}

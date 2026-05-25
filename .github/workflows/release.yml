@@ -32,7 +32,7 @@ jobs:
           GIT_PUBLISH_USERNAME: agorapulse-bot
           GIT_PUBLISH_PASSWORD: ${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}
         run: |
-          ./gradlew :docs:guide:gitPublishPush publishAndReleaseToMavenCentral \
+          ./gradlew :guide:gitPublishPush publishAndReleaseToMavenCentral \
             -Pversion=${{ github.ref_name }} \
             -PmavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }} \
             -PmavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }} \
